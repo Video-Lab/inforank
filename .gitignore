@@ -1,5 +1,6 @@
 proj/*
 tests/*
+assets/*
 *.mp4
 *.jpg
 *.jpeg
