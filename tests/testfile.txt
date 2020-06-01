@@ -6,9 +6,8 @@ unit_place=before
 prefix=
 suffix=
 color=
-bg_dark_color=
 bg_light_color=
-bg_medium_color=
+bg_color=
 music=./music/whatever.mp3
 
 ||BEGIN_DATA||

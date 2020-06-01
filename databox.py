@@ -1,18 +1,20 @@
+from misc import *
+
 class DataBox:
-	def __init__(self, width, height, value, unit, unit_place, prefix, suffix, title, color, bg_light_color, bg_medium_color, bg_dark_color, data_image_type, data_image):
-		self.value = value
+	def __init__(self, width, height, value, unit, unit_place, prefix, suffix, title, color, bg_light_color, bg_color, data_image_type, data_image):
+		self.value = value # The data to be displayed
 		self.width = width
 		self.height = height
-		self.unit = unit
-		self.unit_place = unit_place
-		self.prefix = prefix
-		self.suffix = suffix
-		self.title = title
-		self.color = color
-		self.bg_light_color = bg_light_color
-		self.bg_medium_color = bg_medium_color
-		self.bg_dark_color = bg_dark_color
-		self.data_image_type = data_image_type
-		self.data_image = data_image
+		self.unit = unit # Units for the data
+		self.unit_place = unit_place # Before or After
+		self.prefix = prefix # Taxt above value
+		self.suffix = suffix # Text below value
+		self.title = title # Label
+		self.color = color # Color of value background
+		self.bg_light_color = bg_light_color # Title bg color
+		self.bg_color = bg_color # Image bg color
+		self.data_image_type = data_image_type # File or icon
+		self.data_image = data_image # Path or search terms
 
 		self.dimensions = [width, height]
+		self.light_color = getComplement(self.color) # Get lighter color from misc function
