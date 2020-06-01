@@ -8,7 +8,7 @@ suffix=
 color=
 bg_dark_color=
 bg_light_color=
-bg_mediu_color=
+bg_medium_color=
 music=./music/whatever.mp3
 
 ||BEGIN_DATA||
