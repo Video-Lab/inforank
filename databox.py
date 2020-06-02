@@ -1,7 +1,11 @@
 from misc import *
 
 class DataBox:
-	def __init__(self, width, height, value, unit, unit_place, prefix, suffix, title, color, bg_light_color, bg_color, data_image_type, data_image):
+
+	@classmethod
+	def calculateDataBoxWidth(cls, width):
+		
+	def __init__(self, data_box_width, data_box_height, value, unit, unit_place, prefix, suffix, title, color, bg_light_color, bg_color, data_image_type, data_image):
 		self.value = value # The data to be displayed
 		self.width = width
 		self.height = height
