@@ -3,6 +3,8 @@ from video import Video
 from databox import DataBox
 
 def parseFile(path):
+	
+	errorCheckFile(path)
 	begin_settings_index, end_settings_index, begin_data_index, end_data_index = getFileIndexes(path)
 
 	with open(path, 'r') as f:
