@@ -42,6 +42,7 @@ def getFileIndexes(path):
 				end_settings_index = i-1
 	return [begin_settings_index, end_settings_index, begin_data_index, end_data_index]
 
+
 def errorCheckFile(path):
 	with open(path, 'r') as f:
 		begin_settings_index, end_settings_index, begin_data_index, end_data_index = getFileIndexes(path)
