@@ -4,7 +4,8 @@ class DataBox:
 
 	@classmethod
 	def calculateDataBoxWidth(cls, width):
-		
+		return 0 # TODO
+
 	def __init__(self, data_box_width, data_box_height, value, unit, unit_place, prefix, suffix, title, color, bg_light_color, bg_color, data_image_type, data_image):
 		self.value = value # The data to be displayed
 		self.width = width
