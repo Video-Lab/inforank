@@ -4,7 +4,7 @@ class DataBox:
 
 	@classmethod
 	def calculateDataBoxWidth(cls, width):
-		return DATA_BOX_PERCENTAGE*width
+		return DATA_BOX_PERCENTAGE*int(width)
 
 	def __init__(self, data_box_width, data_box_height, data_value, unit, unit_place, prefix, suffix, data_title, color, bg_light_color, bg_color, data_image_type, data_image):
 		self.data_value = data_value # The data to be displayed
