@@ -3,8 +3,11 @@ DEFAULTS = {'prefix': '', 'width': 1920, 'title': '', 'unit': '', 'unit_place': 
 'bg_light_color': [217, 217, 217], 'bg_color': [46, 46, 46], 'music': '', 'data_image_type': 'file', 'data_image': './assets/none.png'}
 CHANNEL_NAME = "InfoRank"
 NUM_BOXES = 4 # "Number of boxes that can fit on the screen"
-GAP_PERCENTAGE = 0.05 # % of width taken up by a gap
+GAP_PERCENTAGE = 0.05 # % of video width taken up by a gap
 DATA_BOX_PERCENTAGE = (1/NUM_BOXES)-((GAP_PERCENTAGE*(NUM_BOXES-1))/NUM_BOXES) #  % of width taken up by single data box
+DATA_VALUE_PERCENTAGE = 0.4
+DATA_TITLE_PERCENTAGE = 0.2
+DATA_IMAGE_PERCENTAGE = 0.4
 
 
 def hexToRGB(color):
@@ -30,7 +33,6 @@ def RGBToHex(color):
 # 	hex_map = {hex_val[i]: i+10 for i in range(len(hex_val))}
 # 	for i in range(10):
 # 		hex_map[str(i)] = i 
-
 	
 
 def getColorComplement(color, shift=20):

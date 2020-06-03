@@ -1,4 +1,5 @@
 from misc import *
+from PIL import Image, ImageDraw, ImageFont
 
 class DataBox:
 
@@ -23,3 +24,40 @@ class DataBox:
 
 		self.dimensions = [data_box_width, data_box_height]
 		self.light_color = getColorComplement(self.color) # Get lighter color from misc function
+
+
+	def generateImageBase(self):
+		pass
+
+	def getDataValueCoordinates(self):
+		pass
+
+	def getDataTitleCoordinates(self):
+		pass
+
+	def getDataImageCoordiantes(self):
+		pass
+
+	def generateTextFont(self, text, x1, y1, x2, y2):
+		pass
+
+	def writeText(self, text, font, x1, y1, x2, y2):
+		pass
+
+	def getImage(self):
+		pass
+
+	def writeDataValue(self):
+		pass
+
+	def writeDataTitle(self):
+		pass
+
+	def writeDataImage(self):
+		pass
+
+	def generateImage(self):
+		pass
+
+	def outputImage(self, out_path):
+		pass
