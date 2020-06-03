@@ -16,6 +16,5 @@ def parseFileTest(path):
 	print(video.data_boxes[0].data_title)
 
 if __name__ == "__main__":
-
 	for test in TESTS:
 		getattr(modules[__name__], test[0])(**test[1])

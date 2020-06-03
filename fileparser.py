@@ -31,7 +31,7 @@ def parseFile(path):
 
 
 		settings['data_box_height'] = settings['height']
-		settings['data_box_width'] = DataBox.calculateDataBoxWidth(settings['width']) # TODO
+		settings['data_box_width'] = DataBox.calculateDataBoxWidth(settings['width'])
 
 		data_settings = getPairsInList(settings, ['data_box_width', 'data_box_height', 'data_value', 'unit', 'unit_place', 'prefix', 'suffix', 'data_title', 'color', 'bg_light_color', 'bg_color'])
 		video_settings = getPairsInList(settings, ['width', 'height', 'title', 'music'])
