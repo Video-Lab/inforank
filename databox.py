@@ -64,8 +64,16 @@ class DataBox:
 		return [(0,title_coords[1][1]),(self.data_box_width,title_coords[1][1]+(DATA_IMAGE_PERCENTAGE*self.data_box_height))]
 
 
-	def generateTextFont(self, text, coords): # Generates a safe font and font size to be used within given coordinates with a given text
-		pass
+	def generateTextFont(self, text, coords, bold, color): # Generates a safe font and font size to be used within given coordinates with a given text
+		relative_coords = [(0,0), (coords[1][0]-coords[0][0],coords[1][1]-coords[1][0])]
+		if bold:
+			font_path = FONT_BOLD
+		else:
+			font_path = FONT_REGULAR
+
+		font = ImageFont.truetype(font=font_path,size=floor(((TEXT_PERCENTAGE*relative_coords[1][0])/len(text))*0.75),fill=color) # Size estimate, convert px to pt
+
+		return font
 
 	def writeText(self, img, text, font, coords): # Writes the text with the given font and coordinates, making sure to horizontally center.
 		pass
