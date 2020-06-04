@@ -13,6 +13,7 @@ DATA_VALUE_PADDING_PERCENTAGE = 0.15*DATA_BOX_PERCENTAGE # % of WIDTH
 FONT_REGULAR = "./assets/Mukta-Light.ttf"
 FONT_BOLD = "./assets/Mukta-Bold.ttf"
 TEXT_PERCENTAGE = 0.6 # % of width of any line taken up by text
+TEXT_COLOR_THRESHOLD = 150 # When to start drawing black text instead of white text. 
 
 
 def hexToRGB(color):
@@ -49,3 +50,18 @@ def getColorComplement(color, shift=45):
 
 def getPairsInList(pair_set, target_list):
 	return {k:v for k,v in pair_set.items() if k in target_list}
+
+
+def getGoodTextColor(color): # Gives a good color for drawing text based on given color.
+	return_hex = False
+	return_color = (250, 250, 250)
+	if type(color) == str:
+		return_hex=True
+		color = hexToRGB(color)
+
+	if sum(color)/3 > TEXT_COLOR_THRESHOLD:
+		return_color = (13, 13, 13)
+
+	if return_hex:
+		return RGBToHex(return_color)
+	return return_color
