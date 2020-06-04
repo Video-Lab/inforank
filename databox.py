@@ -28,33 +28,48 @@ class DataBox:
 
 
 	def generateImageBase(self): # Base of the image with base colors, no text or images
-		pass
+		img = Image.new('RGB', self.dimensions, [0,0,0]) #Create blank image with right dimensions
+		draw = ImageDraw.Draw(img, mode='RGB') # Drawing ctx
+		draw.rectangle(self.getOuterDataValueCoordinates(), fill=self.light_color) # Drawing for light color border around value
+		draw.rectangle(self.getInnerDataValueCoordinates(), fill=self.color) # Inner data value box
+		draw.rectangle(self.getDataTitleCoordinates(), fill=self.bg_light_color) # Title strip
+		draw.rectangle(self.getDataImageCoordiantes(), fill=self.bg_color) # Image box
+		return img
 
-	def getDataValueCoordinates(self): # Coordinates for safe data value box
-		pass
+	def getOuterDataValueCoordinates(self): # Coordinates for safe data value box
+		return [0,0,self.data_box_width,DATA_VALUE_PERCENTAGE*self.data_box_height]
+
+	def getInnerDataValueCoordinates(self):
+		data_value_inner_width = (1-DATA_VALUE_PADDING_PERCENTAGE)*self.data_box_width
+		data_value_inner_height = (1-DATA_VALUE_PADDING_PERCENTAGE)*self.data_box_height
+
+		return [self.data_box_width-data_value_inner_width,self.data_box_height-data_value_inner_height,data_value_inner_width,data_value_inner_height]
 
 	def getDataTitleCoordinates(self): # Coordinates for data title, you get the idea
-		pass
+		value_coords = self.getOuterDataValueCoordinates()
+		return [0,value_coords[3],self.data_box_width,value_coords[3]+(DATA_TITLE_PERCENTAGE*self.data_box_height)]
 
 	def getDataImageCoordiantes(self):
+		title_coords = self.getDataTitleCoordinates()
+		return [0,title_coords[3],self.data_box_width,title_coords[3]+(DATA_IMAGE_PERCENTAGE*self.data_box_height)]
+
+
+	def generateTextFont(self, text, x0, y0, x1, y1): # Generates a safe font and font size to be used within given coordinates with a given text
 		pass
 
-	def generateTextFont(self, text, x1, y1, x2, y2): # Generates a safe font and font size to be used within given coordinates with a given text
-		pass
-
-	def writeText(self, text, font, x1, y1, x2, y2): # Writes the text with the given font and coordinates, making sure to horizontally center.
+	def writeText(self, img, text, font, x0, y0, x1, y1): # Writes the text with the given font and coordinates, making sure to horizontally center.
 		pass
 
 	def getImage(self): # Gets the image from the file or icon API, error checking included
 		pass
 
-	def writeDataValue(self): # Writes data value text (specific call to writeText)
+	def writeDataValue(self, img): # Writes data value text (specific call to writeText)
 		pass
 
-	def writeDataTitle(self): # ...
+	def writeDataTitle(self, img): # ...
 		pass
 
-	def writeDataImage(self):
+	def writeDataImage(self, img):
 		pass
 
 	def generateImage(self): # Generates the image as a whole

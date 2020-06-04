@@ -8,6 +8,7 @@ DATA_BOX_PERCENTAGE = (1/NUM_BOXES)-((GAP_PERCENTAGE*(NUM_BOXES-1))/NUM_BOXES) #
 DATA_VALUE_PERCENTAGE = 0.4
 DATA_TITLE_PERCENTAGE = 0.2
 DATA_IMAGE_PERCENTAGE = 0.4
+DATA_VALUE_PADDING_PERCENTAGE = 0.05 # % of width (of data value box) used for padding used for lighter color in data value 
 
 
 def hexToRGB(color):
