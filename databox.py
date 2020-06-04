@@ -24,40 +24,41 @@ class DataBox:
 
 		self.dimensions = [data_box_width, data_box_height]
 		self.light_color = getColorComplement(self.color) # Get lighter color from misc function
+		self.image = self.generateImage()
 
 
-	def generateImageBase(self):
+	def generateImageBase(self): # Base of the image with base colors, no text or images
 		pass
 
-	def getDataValueCoordinates(self):
+	def getDataValueCoordinates(self): # Coordinates for safe data value box
 		pass
 
-	def getDataTitleCoordinates(self):
+	def getDataTitleCoordinates(self): # Coordinates for data title, you get the idea
 		pass
 
 	def getDataImageCoordiantes(self):
 		pass
 
-	def generateTextFont(self, text, x1, y1, x2, y2):
+	def generateTextFont(self, text, x1, y1, x2, y2): # Generates a safe font and font size to be used within given coordinates with a given text
 		pass
 
-	def writeText(self, text, font, x1, y1, x2, y2):
+	def writeText(self, text, font, x1, y1, x2, y2): # Writes the text with the given font and coordinates, making sure to horizontally center.
 		pass
 
-	def getImage(self):
+	def getImage(self): # Gets the image from the file or icon API, error checking included
 		pass
 
-	def writeDataValue(self):
+	def writeDataValue(self): # Writes data value text (specific call to writeText)
 		pass
 
-	def writeDataTitle(self):
+	def writeDataTitle(self): # ...
 		pass
 
 	def writeDataImage(self):
 		pass
 
-	def generateImage(self):
+	def generateImage(self): # Generates the image as a whole
 		pass
 
-	def outputImage(self, out_path):
+	def outputImage(self, out_path): # Writes image to file at out_path
 		pass
