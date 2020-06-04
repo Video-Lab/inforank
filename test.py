@@ -3,7 +3,8 @@ from sys import modules
 
 
 # Testing info
-TESTS = [["parseFileTest", {'path': './tests/testfile.txt'}]]
+TESTS = [["generateImageBaseTest", {'path': './tests/testfile.txt', 'test_path': './tests/imgs/databox_base_sample.png'}]]
+OLD_TESTS = [["parseFileTest", {'path': './tests/testfile.txt'}]]
 
 def parseFileTest(path):
 	import fileparser
@@ -14,6 +15,14 @@ def parseFileTest(path):
 	print(video.data_boxes[0].data_box_width)
 	print(video.data_boxes[0].data_value)
 	print(video.data_boxes[0].data_title)
+
+
+def generateImageBaseTest(path, test_path):
+	import fileparser
+	from databox import DataBox
+	video = fileparser.parseFile(path)
+	img = video.data_boxes[0].generateImageBase()
+	img.save(test_path)
 
 if __name__ == "__main__":
 	for test in TESTS:
