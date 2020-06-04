@@ -104,9 +104,9 @@ class DataBox:
 
 		#Drawing text
 		draw = ImageDraw.draw(img)
-		draw.text(prefix_coords, self.prefix)
-		draw.text(main_coords, self.data_value)
-		draw.text(suffix_coords, self.suffix)
+		img = self.writeText(img, self.prefix, prefix_font, prefix_coords)
+		img = self.writeText(img, self.data_value, main_font, main_coords)
+		img = self.writeText(img, self.suffix, suffix_font, suffix_coords)
 
 		return img
 
@@ -118,6 +118,7 @@ class DataBox:
 
 	def generateImage(self): # Generates the image as a whole
 		self.image = self.generateImageBase()
+		self.image = self.writeDataValue(self.image)
 
 	def outputImage(self, out_path): # Writes image to file at out_path
 		pass

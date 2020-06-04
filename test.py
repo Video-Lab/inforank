@@ -24,6 +24,15 @@ def generateImageBaseTest(path, test_path):
 	img = video.data_boxes[0].generateImageBase()
 	img.save(test_path)
 
+
+def generateImageTest(path, test_path):
+	import fileparser
+	from databox import DataBox
+	video = fileparser.parseFile(path)
+	video.data_boxes[0].generateImage()
+	video.data_boxes[0].image.save(test_path)
+
+
 if __name__ == "__main__":
 	for test in TESTS:
 		getattr(modules[__name__], test[0])(**test[1])
