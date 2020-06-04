@@ -76,7 +76,12 @@ class DataBox:
 		return font
 
 	def writeText(self, img, text, font, coords): # Writes the text with the given font and coordinates, making sure to horizontally center.
-		pass
+		draw = ImageDraw.Draw(img, mode='RGB')
+		text_size = font.textsize(text)
+		w,h = [coords[1][0]-coords[0][0], coords[1][1]-coords[0][1]]
+		text_coords = [coords[0][0]+((1-TEXT_PERCENTAGE)/2)*w, coords[1][0]]
+		draw.text(text_coords, text, font=font)
+		return img
 
 	def getImage(self): # Gets the image from the file or icon API, error checking included
 		pass
