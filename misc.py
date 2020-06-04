@@ -1,6 +1,6 @@
 # Constants for general info, user-specfic global data, etc.
-DEFAULTS = {'prefix': '', 'width': 1920, 'title': '', 'unit': '', 'unit_place': 'after', 'prefix': '', 'suffix': '', 'color': [21, 64, 16],
-'bg_light_color': [217, 217, 217], 'bg_color': [46, 46, 46], 'music': '', 'data_image_type': 'file', 'data_image': './assets/none.png'}
+DEFAULTS = {'prefix': '', 'width': 1920, 'title': '', 'unit': '', 'unit_place': 'after', 'prefix': '', 'suffix': '', 'color': (21, 64, 16),
+'bg_light_color': (217, 217, 217), 'bg_color': (46, 46, 46), 'music': '', 'data_image_type': 'file', 'data_image': './assets/none.png'}
 CHANNEL_NAME = "InfoRank"
 NUM_BOXES = 4 # "Number of boxes that can fit on the screen"
 GAP_PERCENTAGE = 0.05 # % of video width taken up by a gap
@@ -15,7 +15,7 @@ def hexToRGB(color):
 	if color[0] == "#":
 		color = color[1:] # Remove hash
 
-	return [int(color[0:2],16), int(color[2:4],16), int(color[4:6],16)]
+	return tuple([int(color[0:2],16), int(color[2:4],16), int(color[4:6],16)])
 
 def RGBToHex(color):
 	return "#" + hex(color[0])[2:] + hex(color[1])[2:] + hex(color[2])[2:] # Remove 0x at start
@@ -41,7 +41,7 @@ def getColorComplement(color, shift=20):
 		color = hexToRGB(color)
 		return RGBToHex([c+shift for c in color])
 	else:
-		return [c+shift for c in color]
+		return tuple([c+shift for c in color])
 
 def getPairsInList(pair_set, target_list):
 	return {k:v for k,v in pair_set.items() if k in target_list}
