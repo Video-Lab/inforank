@@ -5,10 +5,10 @@ CHANNEL_NAME = "InfoRank"
 NUM_BOXES = 4 # "Number of boxes that can fit on the screen"
 GAP_PERCENTAGE = 0.05 # % of video width taken up by a gap
 DATA_BOX_PERCENTAGE = (1/NUM_BOXES)-((GAP_PERCENTAGE*(NUM_BOXES-1))/NUM_BOXES) #  % of width taken up by single data box
-DATA_VALUE_PERCENTAGE = 0.4
-DATA_TITLE_PERCENTAGE = 0.2
-DATA_IMAGE_PERCENTAGE = 0.4
-DATA_VALUE_PADDING_PERCENTAGE = 0.05 # % of width (of data value box) used for padding used for lighter color in data value 
+DATA_VALUE_PERCENTAGE = 0.50
+DATA_TITLE_PERCENTAGE = 0.06
+DATA_IMAGE_PERCENTAGE = 0.54
+DATA_VALUE_PADDING_PERCENTAGE = 0.15*DATA_BOX_PERCENTAGE # % of WIDTH 
 
 
 def hexToRGB(color):
@@ -36,12 +36,12 @@ def RGBToHex(color):
 # 		hex_map[str(i)] = i 
 	
 
-def getColorComplement(color, shift=20):
+def getColorComplement(color, shift=45):
 	if type(color) == str:
 		color = hexToRGB(color)
-		return RGBToHex([c+shift for c in color])
+		return RGBToHex([min(255,c+shift) for c in color]) # Add to RGB compoenents, cap at 255
 	else:
-		return tuple([c+shift for c in color])
+		return tuple([min(255,c+shift) for c in color]) # Same but no conversion to rgb tuple
 
 def getPairsInList(pair_set, target_list):
 	return {k:v for k,v in pair_set.items() if k in target_list}

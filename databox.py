@@ -16,6 +16,7 @@ class DataBox:
 		self.prefix = prefix # Taxt above value
 		self.suffix = suffix # Text below value
 		self.data_title = data_title # Label
+		self.pad=DATA_VALUE_PADDING_PERCENTAGE*self.data_box_width
 		if type(color) == str:
 			self.color = hexToRGB(color)
 		else:
@@ -52,10 +53,7 @@ class DataBox:
 		return [(0,0) ,(self.data_box_width,DATA_VALUE_PERCENTAGE*self.data_box_height)]
 
 	def getInnerDataValueCoordinates(self):
-		data_value_inner_width = (1-DATA_VALUE_PADDING_PERCENTAGE)*self.data_box_width
-		data_value_inner_height = (1-DATA_VALUE_PADDING_PERCENTAGE)*self.data_box_height
-
-		return [(self.data_box_width-data_value_inner_width,self.data_box_height-data_value_inner_height),(data_value_inner_width,data_value_inner_height)]
+		return [(self.pad,self.pad),(self.data_box_width-self.pad,DATA_VALUE_PERCENTAGE*self.data_box_height-self.pad)]
 
 	def getDataTitleCoordinates(self): # Coordinates for data title, you get the idea
 		value_coords = self.getOuterDataValueCoordinates()
@@ -66,10 +64,10 @@ class DataBox:
 		return [(0,title_coords[1][1]),(self.data_box_width,title_coords[1][1]+(DATA_IMAGE_PERCENTAGE*self.data_box_height))]
 
 
-	def generateTextFont(self, text, x0, y0, x1, y1): # Generates a safe font and font size to be used within given coordinates with a given text
+	def generateTextFont(self, text, coords): # Generates a safe font and font size to be used within given coordinates with a given text
 		pass
 
-	def writeText(self, img, text, font, x0, y0, x1, y1): # Writes the text with the given font and coordinates, making sure to horizontally center.
+	def writeText(self, img, text, font, coords): # Writes the text with the given font and coordinates, making sure to horizontally center.
 		pass
 
 	def getImage(self): # Gets the image from the file or icon API, error checking included

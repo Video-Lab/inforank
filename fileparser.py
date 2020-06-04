@@ -21,9 +21,6 @@ def parseFile(path):
 				if d[k] == '':
 					d[k] = DEFAULTS[k]
 
-
-		print(settings.keys())
-
 		for k in settings.keys():
 			if settings[k] == '':
 				settings[k] = DEFAULTS[k]
