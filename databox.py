@@ -78,8 +78,8 @@ class DataBox:
 	def writeText(self, img, text, font, coords): # Writes the text with the given font and coordinates, making sure to horizontally center.
 		draw = ImageDraw.Draw(img, mode='RGB')
 		text_size = font.textsize(text)
-		w,h = [coords[1][0]-coords[0][0], coords[1][1]-coords[0][1]]
-		text_coords = [coords[0][0]+((1-TEXT_PERCENTAGE)/2)*w, coords[1][0]]
+		w,h = [coords[1][0]-coords[0][0], coords[1][1]-coords[0][1]] # width and height
+		text_coords = [coords[0][0]+((1-TEXT_PERCENTAGE)/2)*w, coords[1][0]] # Adjust for padding & percentage
 		draw.text(text_coords, text, font=font)
 		return img
 
@@ -87,7 +87,28 @@ class DataBox:
 		pass
 
 	def writeDataValue(self, img): # Writes data value text (specific call to writeText)
-		pass
+		inner_coords = self.getInnerDataValueCoordinates()
+		top_padding_percentage = 1-((2*DATA_VALUE_SECONDARY_PERCENTAGE)+DATA_VALUE_MAIN_PERCENTAGE)
+		inner_height = inner_coords[1][1]-inner_coords[0][1]
+
+		# Calculating coords for text boxes
+		prefix_coords = [(inner_coords[0][0], inner_coords[0][1]), (inner_coords[1][0], inner_coords[0][1]+(inner_height*(top_padding_percentage+DATA_VALUE_SECONDARY_PERCENTAGE)))]
+		main_coords = [(prefix_coords[0][0], prefix_coords[1][1]+TEXT_PADDING), (prefix_coords[1][0], prefix_coords[1][1]+TEXT_PADDING+(inner_height*DATA_VALUE_MAIN_PERCENTAGE))]
+		suffix_coords = [(main_coords[0][0], main_coords[1][1]+TEXT_PADDING), (main_coords[1][0], main_coords[1][1]+TEXT_PADDING+(inner_height*DATA_VALUE_SECONDARY_PERCENTAGE))]
+
+		#Getting fonts
+		text_color = getGoodTextColor(self.color)
+		prefix_font = self.generateTextFont(self.prefix, coords=prefix_coords, bold=False, color=text_color)
+		main_font = self.generateTextFont(self.data_value, coords=main_coords, bold=True, color=text_color)
+		suffix_font = self.generateTextFont(self.suffix, coords=suffix_coords, bold=False, color=text_color)
+
+		#Drawing text
+		draw = ImageDraw.draw(img)
+		draw.text(prefix_coords, self.prefix)
+		draw.text(main_coords, self.data_value)
+		draw.text(suffix_coords, self.suffix)
+
+		return img
 
 	def writeDataTitle(self, img): # ...
 		pass
@@ -96,7 +117,7 @@ class DataBox:
 		pass
 
 	def generateImage(self): # Generates the image as a whole
-		pass
+		self.image = self.generateImageBase()
 
 	def outputImage(self, out_path): # Writes image to file at out_path
 		pass
