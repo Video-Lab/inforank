@@ -64,16 +64,17 @@ class DataBox:
 		return [(0,title_coords[1][1]),(self.data_box_width,title_coords[1][1]+(DATA_IMAGE_PERCENTAGE*self.data_box_height))]
 
 
-	def generateTextFont(self, text, coords, bold): # Generates a safe font and font size to be used within given coordinates with a given text
-		relative_coords = [(0,0), (coords[1][0]-coords[0][0],coords[1][1]-coords[1][0])]
+	def generateTextFont(self, text, size, bold): # Generates a safe font and font size to be used within given coordinates with a given text
+		# relative_coords = [(0,0), (coords[1][0]-coords[0][0],coords[1][1]-coords[1][0])]
 		if bold:
 			font_path = FONT_BOLD
 		else:
 			font_path = FONT_REGULAR
 
-		font = ImageFont.truetype(font=font_path,size=int((((TEXT_PERCENTAGE*relative_coords[1][0])/max(1,len(text))))*0.75)) # Size estimate, convert px to pt
+		# font = ImageFont.truetype(font=font_path,size=int((((TEXT_PERCENTAGE*relative_coords[1][0])/max(1,len(text))))*0.75)) # Size estimate, convert px to pt
 
-		return font
+
+		return ImageFont.truetype(font=font_path, size=size)
 
 	def writeText(self, img, text, font, color, coords): # Writes the text with the given font and coordinates, making sure to horizontally center.
 
@@ -89,19 +90,26 @@ class DataBox:
 
 	def writeDataValue(self, img): # Writes data value text (specific call to writeText)
 		inner_coords = self.getInnerDataValueCoordinates()
-		top_padding_percentage = 0.15 # 1-((2*DATA_VALUE_SECONDARY_PERCENTAGE)+DATA_VALUE_MAIN_PERCENTAGE)
-		inner_height = inner_coords[1][1]-inner_coords[0][1]
-
-		# Calculating coords for text boxes
-		prefix_coords = [(inner_coords[0][0], inner_coords[0][1]+(inner_height*top_padding_percentage)), (inner_coords[1][0], inner_coords[0][1]+(inner_height*(top_padding_percentage+DATA_VALUE_SECONDARY_PERCENTAGE)))]
-		main_coords = [(prefix_coords[0][0], prefix_coords[1][1]+TEXT_PADDING), (prefix_coords[1][0], prefix_coords[1][1]+TEXT_PADDING+(inner_height*DATA_VALUE_MAIN_PERCENTAGE))]
-		suffix_coords = [(main_coords[0][0], main_coords[1][1]+TEXT_PADDING), (main_coords[1][0], main_coords[1][1]+TEXT_PADDING+(inner_height*DATA_VALUE_SECONDARY_PERCENTAGE))]
+		top_padding_percentage = (1-DATA_VALUE_TEXT_PERCENTAGE)/2
+		w,h = [inner_coords[1][0]-inner_coords[0][0], inner_coords[1][1]-inner_coords[0][1]] # width and height
 
 		#Getting fonts
-		text_color = getGoodTextColor(self.color)
-		prefix_font = self.generateTextFont(self.prefix, coords=prefix_coords, bold=False)
-		main_font = self.generateTextFont(self.data_value, coords=main_coords, bold=True)
-		suffix_font = self.generateTextFont(self.suffix, coords=suffix_coords, bold=False)
+		# text_color = getGoodTextColor(self.color)
+		prefix_font = self.generateTextFont(self.prefix,size=DATA_VALUE_FONT_SECONDARY,  bold=False)
+		main_font = self.generateTextFont(self.data_value,size=DATA_VALUE_FONT_MAIN,  bold=True)
+		suffix_font = self.generateTextFont(self.suffix, size=DATA_VALUE_FONT_SECONDARY, bold=False)
+
+		# Calculating coords for text boxes
+		# prefix_coords = [(inner_coords[0][0], inner_coords[0][1]+(inner_height*top_padding_percentage)), (inner_coords[1][0], inner_coords[0][1]+(inner_height*(top_padding_percentage+DATA_VALUE_SECONDARY_PERCENTAGE)))]
+		# main_coords = [(prefix_coords[0][0], prefix_coords[1][1]+TEXT_PADDING), (prefix_coords[1][0], prefix_coords[1][1]+TEXT_PADDING+(inner_height*DATA_VALUE_MAIN_PERCENTAGE))]
+		# suffix_coords = [(main_coords[0][0], main_coords[1][1]+TEXT_PADDING), (main_coords[1][0], main_coords[1][1]+TEXT_PADDING+(inner_height*DATA_VALUE_SECONDARY_PERCENTAGE))]
+		prefix_size = prefix_font.getsize(self.prefix)
+		main_size = main_font.getsize(self.data_value)
+		suffix_size = suffix_font.getsize(self.suffix)
+
+		prefix_coords = [ (inner_coords[0][0], inner_coords[0][1]+(h*top_padding_percentage)) , (inner_coords[1][0], inner_coords[0][1]+prefix_size[1]) ]
+		main_coords = [ (prefix_coords[0][0], prefix_coords[1][1]+TEXT_PADDING) , (prefix_coords[1][0], prefix_coords[1][1]+main_size[1]) ]
+		suffix_coords = [ (main_coords[0][0], main_coords[1][1]+TEXT_PADDING) , (main_coords[1][0], main_coords[1][1]+suffix_size[1]) ]
 
 		#Drawing text
 		img = self.writeText(img, self.prefix, prefix_font, text_color, prefix_coords)
