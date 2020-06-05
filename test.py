@@ -3,7 +3,7 @@ from sys import modules
 
 
 # Testing info
-TESTS = [["generateImageBaseTest", {'path': './tests/testfile.txt', 'test_path': './tests/imgs/databox_base_sample.png'}]]
+TESTS = [["generateImageTest", {'path': './tests/testfile.txt', 'test_path': './tests/imgs/databox_base_w_value_sample.png'}]]
 OLD_TESTS = [["parseFileTest", {'path': './tests/testfile.txt'}]]
 
 def parseFileTest(path):

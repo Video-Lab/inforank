@@ -64,23 +64,24 @@ class DataBox:
 		return [(0,title_coords[1][1]),(self.data_box_width,title_coords[1][1]+(DATA_IMAGE_PERCENTAGE*self.data_box_height))]
 
 
-	def generateTextFont(self, text, coords, bold, color): # Generates a safe font and font size to be used within given coordinates with a given text
+	def generateTextFont(self, text, coords, bold): # Generates a safe font and font size to be used within given coordinates with a given text
 		relative_coords = [(0,0), (coords[1][0]-coords[0][0],coords[1][1]-coords[1][0])]
 		if bold:
 			font_path = FONT_BOLD
 		else:
 			font_path = FONT_REGULAR
 
-		font = ImageFont.truetype(font=font_path,size=floor(((TEXT_PERCENTAGE*relative_coords[1][0])/len(text))*0.75),fill=color) # Size estimate, convert px to pt
+		font = ImageFont.truetype(font=font_path,size=int((((TEXT_PERCENTAGE*relative_coords[1][0])/max(1,len(text))))*0.75)) # Size estimate, convert px to pt
 
 		return font
 
-	def writeText(self, img, text, font, coords): # Writes the text with the given font and coordinates, making sure to horizontally center.
+	def writeText(self, img, text, font, color, coords): # Writes the text with the given font and coordinates, making sure to horizontally center.
+
 		draw = ImageDraw.Draw(img, mode='RGB')
-		text_size = font.textsize(text)
+		text_size = font.getsize(text)
 		w,h = [coords[1][0]-coords[0][0], coords[1][1]-coords[0][1]] # width and height
-		text_coords = [coords[0][0]+((1-TEXT_PERCENTAGE)/2)*w, coords[1][0]] # Adjust for padding & percentage
-		draw.text(text_coords, text, font=font)
+		left_pad = (w-text_size[0])/2
+		draw.text([coords[0][0]+left_pad, coords[0][1]], text, font=font, fill=color)
 		return img
 
 	def getImage(self): # Gets the image from the file or icon API, error checking included
@@ -88,25 +89,24 @@ class DataBox:
 
 	def writeDataValue(self, img): # Writes data value text (specific call to writeText)
 		inner_coords = self.getInnerDataValueCoordinates()
-		top_padding_percentage = 1-((2*DATA_VALUE_SECONDARY_PERCENTAGE)+DATA_VALUE_MAIN_PERCENTAGE)
+		top_padding_percentage = 0.15 # 1-((2*DATA_VALUE_SECONDARY_PERCENTAGE)+DATA_VALUE_MAIN_PERCENTAGE)
 		inner_height = inner_coords[1][1]-inner_coords[0][1]
 
 		# Calculating coords for text boxes
-		prefix_coords = [(inner_coords[0][0], inner_coords[0][1]), (inner_coords[1][0], inner_coords[0][1]+(inner_height*(top_padding_percentage+DATA_VALUE_SECONDARY_PERCENTAGE)))]
+		prefix_coords = [(inner_coords[0][0], inner_coords[0][1]+(inner_height*top_padding_percentage)), (inner_coords[1][0], inner_coords[0][1]+(inner_height*(top_padding_percentage+DATA_VALUE_SECONDARY_PERCENTAGE)))]
 		main_coords = [(prefix_coords[0][0], prefix_coords[1][1]+TEXT_PADDING), (prefix_coords[1][0], prefix_coords[1][1]+TEXT_PADDING+(inner_height*DATA_VALUE_MAIN_PERCENTAGE))]
 		suffix_coords = [(main_coords[0][0], main_coords[1][1]+TEXT_PADDING), (main_coords[1][0], main_coords[1][1]+TEXT_PADDING+(inner_height*DATA_VALUE_SECONDARY_PERCENTAGE))]
 
 		#Getting fonts
 		text_color = getGoodTextColor(self.color)
-		prefix_font = self.generateTextFont(self.prefix, coords=prefix_coords, bold=False, color=text_color)
-		main_font = self.generateTextFont(self.data_value, coords=main_coords, bold=True, color=text_color)
-		suffix_font = self.generateTextFont(self.suffix, coords=suffix_coords, bold=False, color=text_color)
+		prefix_font = self.generateTextFont(self.prefix, coords=prefix_coords, bold=False)
+		main_font = self.generateTextFont(self.data_value, coords=main_coords, bold=True)
+		suffix_font = self.generateTextFont(self.suffix, coords=suffix_coords, bold=False)
 
 		#Drawing text
-		draw = ImageDraw.draw(img)
-		img = self.writeText(img, self.prefix, prefix_font, prefix_coords)
-		img = self.writeText(img, self.data_value, main_font, main_coords)
-		img = self.writeText(img, self.suffix, suffix_font, suffix_coords)
+		img = self.writeText(img, self.prefix, prefix_font, text_color, prefix_coords)
+		img = self.writeText(img, self.data_value, main_font, text_color, main_coords)
+		img = self.writeText(img, self.suffix, suffix_font, text_color, suffix_coords)
 
 		return img
 

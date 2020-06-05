@@ -12,11 +12,11 @@ DATA_IMAGE_PERCENTAGE = 0.54
 DATA_VALUE_PADDING_PERCENTAGE = 0.15*DATA_BOX_PERCENTAGE # % of WIDTH
 FONT_REGULAR = "./assets/Mukta-Light.ttf"
 FONT_BOLD = "./assets/Mukta-Bold.ttf"
-TEXT_PERCENTAGE = 0.6 # % of width of any line taken up by text
+TEXT_PERCENTAGE = 0.8 # % of width of any line taken up by text
 TEXT_COLOR_THRESHOLD = 150 # When to start drawing black text instead of white text. 
 DATA_VALUE_SECONDARY_PERCENTAGE = 0.2 # % of data value box taken up by prefix/suffix text boxes. 
 DATA_VALUE_MAIN_PERCENTAGE = 0.3 # % of data value box taken up by main text box.
-TEXT_PADDING = 10 # Pixel padding between lines
+TEXT_PADDING = 5 # Pixel padding between lines
 
 
 def hexToRGB(color):
