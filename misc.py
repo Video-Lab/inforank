@@ -7,17 +7,17 @@ NUM_BOXES = 4 # "Number of boxes that can fit on the screen"
 GAP_PERCENTAGE = 0.05 # % of video width taken up by a gap
 DATA_BOX_PERCENTAGE = (1/NUM_BOXES)-((GAP_PERCENTAGE*(NUM_BOXES-1))/NUM_BOXES) #  % of width taken up by single data box
 DATA_VALUE_PERCENTAGE = 0.50
-DATA_TITLE_PERCENTAGE = 0.06
+DATA_TITLE_PERCENTAGE = 0.08
 DATA_IMAGE_PERCENTAGE = 0.54
 DATA_VALUE_PADDING_PERCENTAGE = 0.15*DATA_BOX_PERCENTAGE # % of WIDTH
-FONT_REGULAR = "./assets/Mukta-Light.ttf"
+FONT_REGULAR = "./assets/Mukta-ExtraLight.ttf"
 FONT_BOLD = "./assets/Mukta-Bold.ttf"
 # TEXT_PERCENTAGE = 0.95 # % of width of any line taken up by text
 TEXT_COLOR_THRESHOLD = 150 # When to start drawing black text instead of white text. 
 DATA_VALUE_FONT_SECONDARY = 40
 DATA_VALUE_FONT_MAIN = 120
 TEXT_PADDING = 10 # Pixel padding between lines
-DATA_VALUE_TEXT_PERCENTAGE = 0.8 # % of data value box taken up by text
+DATA_TITLE_FONT = 55
 
 
 def hexToRGB(color):

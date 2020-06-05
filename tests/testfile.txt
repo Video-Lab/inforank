@@ -4,7 +4,7 @@ title=Highest-Paying Jobs
 unit=$
 unit_place=before
 prefix=1 IN
-suffix=PROBABILITY
+suffix= PROBABILITY
 color=
 bg_light_color=
 bg_color=
@@ -12,7 +12,7 @@ music=./music/whatever.mp3
 
 ||BEGIN_DATA||
 
-data_value=17,000|data_title=One Job|data_image_type=file|data_image=./Images/some image.jpg
+data_value=401k|data_title=One Job|data_image_type=file|data_image=./Images/some image.jpg
 
 data_value=53,234|data_title=Another Job|data_image_type=icon|data_image=job, another job
 

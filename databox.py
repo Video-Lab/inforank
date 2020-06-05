@@ -37,7 +37,7 @@ class DataBox:
 
 		self.dimensions = [self.data_box_width, self.data_box_height]
 		self.light_color = getColorComplement(self.color) # Get lighter color from misc function
-		self.image = self.generateImage()
+		self.generateImage()
 
 
 	def generateImageBase(self): # Base of the image with base colors, no text or images
@@ -90,27 +90,40 @@ class DataBox:
 
 	def writeDataValue(self, img): # Writes data value text (specific call to writeText)
 		inner_coords = self.getInnerDataValueCoordinates()
+		print(inner_coords)
 		w,h = [inner_coords[1][0]-inner_coords[0][0], inner_coords[1][1]-inner_coords[0][1]] # width and height
 
 		#Getting fonts
 		text_color = getGoodTextColor(self.color)
+
 		prefix_font = self.generateTextFont(self.prefix,size=DATA_VALUE_FONT_SECONDARY,  bold=False)
 		main_font = self.generateTextFont(self.data_value,size=DATA_VALUE_FONT_MAIN,  bold=True)
 		suffix_font = self.generateTextFont(self.suffix, size=DATA_VALUE_FONT_SECONDARY, bold=False)
 
 		# Calculating coords for text boxes
-		# prefix_coords = [(inner_coords[0][0], inner_coords[0][1]+(inner_height*top_padding_percentage)), (inner_coords[1][0], inner_coords[0][1]+(inner_height*(top_padding_percentage+DATA_VALUE_SECONDARY_PERCENTAGE)))]
-		# main_coords = [(prefix_coords[0][0], prefix_coords[1][1]+TEXT_PADDING), (prefix_coords[1][0], prefix_coords[1][1]+TEXT_PADDING+(inner_height*DATA_VALUE_MAIN_PERCENTAGE))]
-		# suffix_coords = [(main_coords[0][0], main_coords[1][1]+TEXT_PADDING), (main_coords[1][0], main_coords[1][1]+TEXT_PADDING+(inner_height*DATA_VALUE_SECONDARY_PERCENTAGE))]
 		prefix_size = prefix_font.getsize(self.prefix)
 		main_size = main_font.getsize(self.data_value)
 		suffix_size = suffix_font.getsize(self.suffix)
 
+
 		top_padding = (h - (prefix_size[1] + main_size[1] + suffix_size[1] + (2*TEXT_PADDING) ) )/2
+
+		print(w)
+		print(h)
+		print(prefix_size)
+		print(main_size)
+		print(suffix_size)
+		print(top_padding)
+		print("\n")
 
 		prefix_coords = [ (inner_coords[0][0], inner_coords[0][1]+top_padding) , (inner_coords[1][0], inner_coords[0][1]+top_padding+prefix_size[1]) ]
 		main_coords = [ (prefix_coords[0][0], prefix_coords[1][1]+TEXT_PADDING) , (prefix_coords[1][0], prefix_coords[1][1]+TEXT_PADDING+main_size[1]) ]
 		suffix_coords = [ (main_coords[0][0], main_coords[1][1]+TEXT_PADDING) , (main_coords[1][0], main_coords[1][1]+TEXT_PADDING+suffix_size[1]) ]
+
+		print(prefix_coords)
+		print(main_coords)
+		print(suffix_coords)
+		print("\n\n")
 
 
 		#Drawing text
@@ -121,7 +134,13 @@ class DataBox:
 		return img
 
 	def writeDataTitle(self, img): # ...
-		pass
+		text_color = getGoodTextColor(self.bg_light_color)
+		title_coords = self.getDataTitleCoordinates()
+		title_font = self.generateTextFont(self.data_title,size=DATA_TITLE_FONT,bold=True)
+		title_coords_new = [(title_coords[0][0], title_coords[0][1]) , (title_coords[1][0], title_coords[1][1])]
+		img = self.writeText(img, self.data_title,title_font,text_color,title_coords_new)
+
+		return img
 
 	def writeDataImage(self, img):
 		pass
@@ -129,6 +148,7 @@ class DataBox:
 	def generateImage(self): # Generates the image as a whole
 		self.image = self.generateImageBase()
 		self.image = self.writeDataValue(self.image)
+		self.image = self.writeDataTitle(self.image)
 
 	def outputImage(self, out_path): # Writes image to file at out_path
 		pass

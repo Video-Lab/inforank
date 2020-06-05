@@ -29,7 +29,6 @@ def generateImageTest(path, test_path):
 	import fileparser
 	from databox import DataBox
 	video = fileparser.parseFile(path)
-	video.data_boxes[0].generateImage()
 	video.data_boxes[0].image.save(test_path)
 
 
