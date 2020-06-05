@@ -90,11 +90,10 @@ class DataBox:
 
 	def writeDataValue(self, img): # Writes data value text (specific call to writeText)
 		inner_coords = self.getInnerDataValueCoordinates()
-		top_padding_percentage = (1-DATA_VALUE_TEXT_PERCENTAGE)/2
 		w,h = [inner_coords[1][0]-inner_coords[0][0], inner_coords[1][1]-inner_coords[0][1]] # width and height
 
 		#Getting fonts
-		# text_color = getGoodTextColor(self.color)
+		text_color = getGoodTextColor(self.color)
 		prefix_font = self.generateTextFont(self.prefix,size=DATA_VALUE_FONT_SECONDARY,  bold=False)
 		main_font = self.generateTextFont(self.data_value,size=DATA_VALUE_FONT_MAIN,  bold=True)
 		suffix_font = self.generateTextFont(self.suffix, size=DATA_VALUE_FONT_SECONDARY, bold=False)
@@ -107,9 +106,12 @@ class DataBox:
 		main_size = main_font.getsize(self.data_value)
 		suffix_size = suffix_font.getsize(self.suffix)
 
-		prefix_coords = [ (inner_coords[0][0], inner_coords[0][1]+(h*top_padding_percentage)) , (inner_coords[1][0], inner_coords[0][1]+prefix_size[1]) ]
-		main_coords = [ (prefix_coords[0][0], prefix_coords[1][1]+TEXT_PADDING) , (prefix_coords[1][0], prefix_coords[1][1]+main_size[1]) ]
-		suffix_coords = [ (main_coords[0][0], main_coords[1][1]+TEXT_PADDING) , (main_coords[1][0], main_coords[1][1]+suffix_size[1]) ]
+		top_padding = (h - (prefix_size[1] + main_size[1] + suffix_size[1] + (2*TEXT_PADDING) ) )/2
+
+		prefix_coords = [ (inner_coords[0][0], inner_coords[0][1]+top_padding) , (inner_coords[1][0], inner_coords[0][1]+top_padding+prefix_size[1]) ]
+		main_coords = [ (prefix_coords[0][0], prefix_coords[1][1]+TEXT_PADDING) , (prefix_coords[1][0], prefix_coords[1][1]+TEXT_PADDING+main_size[1]) ]
+		suffix_coords = [ (main_coords[0][0], main_coords[1][1]+TEXT_PADDING) , (main_coords[1][0], main_coords[1][1]+TEXT_PADDING+suffix_size[1]) ]
+
 
 		#Drawing text
 		img = self.writeText(img, self.prefix, prefix_font, text_color, prefix_coords)

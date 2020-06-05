@@ -15,8 +15,8 @@ FONT_BOLD = "./assets/Mukta-Bold.ttf"
 # TEXT_PERCENTAGE = 0.95 # % of width of any line taken up by text
 TEXT_COLOR_THRESHOLD = 150 # When to start drawing black text instead of white text. 
 DATA_VALUE_FONT_SECONDARY = 40
-DATA_VALUE_FONT_MAIN = 80
-TEXT_PADDING = 5 # Pixel padding between lines
+DATA_VALUE_FONT_MAIN = 120
+TEXT_PADDING = 10 # Pixel padding between lines
 DATA_VALUE_TEXT_PERCENTAGE = 0.8 # % of data value box taken up by text
 
 
