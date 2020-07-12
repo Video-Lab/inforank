@@ -37,8 +37,14 @@ class DataBox:
 
 		self.dimensions = [self.data_box_width, self.data_box_height]
 		self.light_color = getColorComplement(self.color) # Get lighter color from misc function
+		self.addDataUnit()
 		self.generateImage()
 
+	def addDataUnit(self):
+		if self.unit_place == "before":
+			self.data_value = self.unit + self.data_value
+		else:
+			self.data_value += self.unit
 
 	def generateImageBase(self): # Base of the image with base colors, no text or images
 		img = Image.new('RGB', self.dimensions) #Create blank image with right dimensions

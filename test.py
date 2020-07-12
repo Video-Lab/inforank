@@ -16,7 +16,6 @@ def parseFileTest(path):
 	print(video.data_boxes[0].data_value)
 	print(video.data_boxes[0].data_title)
 
-
 def generateImageBaseTest(path, test_path):
 	import fileparser
 	from databox import DataBox
