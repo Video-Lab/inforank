@@ -55,7 +55,7 @@ class DataBox:
 	def getInnerDataValueCoordinates(self):
 		return [(self.pad,self.pad),(self.data_box_width-self.pad,DATA_VALUE_PERCENTAGE*self.data_box_height-self.pad)]
 
-	def getDataTitleCoordinates(self): # Coordinates for data title, you get the idea
+	def getDataTitleCoordinates(self): # Coordinates for data title, ...
 		value_coords = self.getOuterDataValueCoordinates()
 		return [(0,value_coords[1][1]),(self.data_box_width,value_coords[1][1]+(DATA_TITLE_PERCENTAGE*self.data_box_height))]
 
@@ -82,7 +82,13 @@ class DataBox:
 		text_size = font.getsize(text)
 		w,h = [coords[1][0]-coords[0][0], coords[1][1]-coords[0][1]] # width and height
 		left_pad = (w-text_size[0])/2
-		draw.text([coords[0][0]+left_pad, coords[0][1]], text, font=font, fill=color)
+		corner = [coords[0][0]+left_pad-font.getoffset(text)[0], coords[0][1]-font.getoffset(text)[1]]
+		print(coords)
+		print(text_size)
+		print(corner)
+		print("\n")
+		draw.text(corner, text, font=font, fill=color)
+		# draw.rectangle([tuple(corner), (corner[0]+text_size[0], corner[1]+text_size[1])], outline='black') # Border around text
 		return img
 
 	def getImage(self): # Gets the image from the file or icon API, error checking included
@@ -90,54 +96,52 @@ class DataBox:
 
 	def writeDataValue(self, img): # Writes data value text (specific call to writeText)
 		inner_coords = self.getInnerDataValueCoordinates()
-		print(inner_coords)
 		w,h = [inner_coords[1][0]-inner_coords[0][0], inner_coords[1][1]-inner_coords[0][1]] # width and height
 
-		#Getting fonts
+		# #Getting fonts
 		text_color = getGoodTextColor(self.color)
-
 		prefix_font = self.generateTextFont(self.prefix,size=DATA_VALUE_FONT_SECONDARY,  bold=False)
 		main_font = self.generateTextFont(self.data_value,size=DATA_VALUE_FONT_MAIN,  bold=True)
 		suffix_font = self.generateTextFont(self.suffix, size=DATA_VALUE_FONT_SECONDARY, bold=False)
 
-		# Calculating coords for text boxes
-		prefix_size = prefix_font.getsize(self.prefix)
-		main_size = main_font.getsize(self.data_value)
-		suffix_size = suffix_font.getsize(self.suffix)
+		# # Calculating coords for text boxes
+		prefix_size = np.subtract(prefix_font.getsize(self.prefix), prefix_font.getoffset(self.prefix))
+		main_size = np.subtract(main_font.getsize(self.data_value), main_font.getoffset(self.data_value))
+		suffix_size = np.subtract(suffix_font.getsize(self.suffix), suffix_font.getoffset(self.suffix))
 
-
-		top_padding = (h - (prefix_size[1] + main_size[1] + suffix_size[1] + (2*TEXT_PADDING) ) )/2
-
-		print(w)
-		print(h)
-		print(prefix_size)
-		print(main_size)
-		print(suffix_size)
-		print(top_padding)
-		print("\n")
+		top_padding = (h - (prefix_size[1] + main_size[1] + suffix_size[1] + (2*TEXT_PADDING) ) )/2 # Inner data value height - text w/ padding height / 2
 
 		prefix_coords = [ (inner_coords[0][0], inner_coords[0][1]+top_padding) , (inner_coords[1][0], inner_coords[0][1]+top_padding+prefix_size[1]) ]
+
 		main_coords = [ (prefix_coords[0][0], prefix_coords[1][1]+TEXT_PADDING) , (prefix_coords[1][0], prefix_coords[1][1]+TEXT_PADDING+main_size[1]) ]
+
 		suffix_coords = [ (main_coords[0][0], main_coords[1][1]+TEXT_PADDING) , (main_coords[1][0], main_coords[1][1]+TEXT_PADDING+suffix_size[1]) ]
 
-		print(prefix_coords)
-		print(main_coords)
-		print(suffix_coords)
-		print("\n\n")
-
-
-		#Drawing text
+		# #Drawing text
 		img = self.writeText(img, self.prefix, prefix_font, text_color, prefix_coords)
 		img = self.writeText(img, self.data_value, main_font, text_color, main_coords)
 		img = self.writeText(img, self.suffix, suffix_font, text_color, suffix_coords)
 
+		# Draw borders around text areas (debug only)
+
+		# draw = ImageDraw.Draw(img, mode='RGB')
+		
+		# draw.rectangle(prefix_coords, outline='white')
+		# draw.rectangle(main_coords, outline='white')
+		# draw.rectangle(suffix_coords, outline='white')
+
 		return img
+
+
 
 	def writeDataTitle(self, img): # ...
 		text_color = getGoodTextColor(self.bg_light_color)
 		title_coords = self.getDataTitleCoordinates()
 		title_font = self.generateTextFont(self.data_title,size=DATA_TITLE_FONT,bold=True)
-		title_coords_new = [(title_coords[0][0], title_coords[0][1]) , (title_coords[1][0], title_coords[1][1])]
+		title_size = np.subtract(title_font.getsize(self.data_title), title_font.getoffset(self.data_title))
+		top_pad = ((title_coords[1][1] - title_coords[0][1]) - title_size[1]) / 2
+	
+		title_coords_new = [(title_coords[0][0], title_coords[0][1]+top_pad) , (title_coords[1][0], title_coords[1][1])]
 		img = self.writeText(img, self.data_title,title_font,text_color,title_coords_new)
 
 		return img

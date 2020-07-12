@@ -1,3 +1,5 @@
+import numpy as np
+import os
 # Constants for general info, user-specfic global data, etc.
 DEFAULTS = {'prefix': '', 'width': 1920, 'title': '', 'unit': '', 'unit_place': 'after', 'prefix': '', 'suffix': '', 'color': (21, 64, 16),
 'bg_light_color': (217, 217, 217), 'bg_color': (46, 46, 46), 'music': '', 'data_image_type': 'file', 'data_image': './assets/none.png'}
@@ -16,7 +18,7 @@ FONT_BOLD = "./assets/Mukta-Bold.ttf"
 TEXT_COLOR_THRESHOLD = 150 # When to start drawing black text instead of white text. 
 DATA_VALUE_FONT_SECONDARY = 40
 DATA_VALUE_FONT_MAIN = 120
-TEXT_PADDING = 10 # Pixel padding between lines
+TEXT_PADDING = 40 # Pixel padding between lines
 DATA_TITLE_FONT = 55
 
 
