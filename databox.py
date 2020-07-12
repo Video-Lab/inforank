@@ -64,7 +64,9 @@ class DataBox:
 		return [(0,title_coords[1][1]),(self.data_box_width,title_coords[1][1]+(DATA_IMAGE_PERCENTAGE*self.data_box_height))]
 
 
-	def generateTextFont(self, text, size, bold): # Generates a safe font and font size to be used within given coordinates with a given text
+	def generateTextFont(self, text, size, bold, box=None): # Generates a safe font and font size to be used within given coordinates with a given text
+		if not box:
+			box = [(0,0), (self.data_box_width, self.data_box_height)]
 		# relative_coords = [(0,0), (coords[1][0]-coords[0][0],coords[1][1]-coords[1][0])]
 		if bold:
 			font_path = FONT_BOLD
@@ -73,8 +75,17 @@ class DataBox:
 
 		# font = ImageFont.truetype(font=font_path,size=int((((TEXT_PERCENTAGE*relative_coords[1][0])/max(1,len(text))))*0.75)) # Size estimate, convert px to pt
 
-
-		return ImageFont.truetype(font=font_path, size=size)
+		font = ImageFont.truetype(font=font_path, size=size)
+		
+		w,h = box[1][0]-box[0][0],box[1][1]-box[0][1]
+		w *= TEXT_PERCENTAGE
+		for i in range(font.size, 0, -1):
+			text_size = font.getsize(text)
+			if text_size[0] > w or text_size[1] > h:
+				font = ImageFont.truetype(font=font_path, size=font.size-1)
+			else:
+				break
+		return font
 
 	def writeText(self, img, text, font, color, coords): # Writes the text with the given font and coordinates, making sure to horizontally center.
 
@@ -83,10 +94,6 @@ class DataBox:
 		w,h = [coords[1][0]-coords[0][0], coords[1][1]-coords[0][1]] # width and height
 		left_pad = (w-text_size[0])/2
 		corner = [coords[0][0]+left_pad-font.getoffset(text)[0], coords[0][1]-font.getoffset(text)[1]]
-		print(coords)
-		print(text_size)
-		print(corner)
-		print("\n")
 		draw.text(corner, text, font=font, fill=color)
 		# draw.rectangle([tuple(corner), (corner[0]+text_size[0], corner[1]+text_size[1])], outline='black') # Border around text
 		return img
@@ -100,9 +107,11 @@ class DataBox:
 
 		# #Getting fonts
 		text_color = getGoodTextColor(self.color)
-		prefix_font = self.generateTextFont(self.prefix,size=DATA_VALUE_FONT_SECONDARY,  bold=False)
-		main_font = self.generateTextFont(self.data_value,size=DATA_VALUE_FONT_MAIN,  bold=True)
-		suffix_font = self.generateTextFont(self.suffix, size=DATA_VALUE_FONT_SECONDARY, bold=False)
+		prefix_font = self.generateTextFont(self.prefix,size=DATA_VALUE_FONT_SECONDARY,  bold=False, box=inner_coords) # Making sure to fit in box (height doesn't matter)
+		main_font = self.generateTextFont(self.data_value,size=DATA_VALUE_FONT_MAIN,  bold=True, box=inner_coords) # ...
+		suffix_font = self.generateTextFont(self.suffix, size=DATA_VALUE_FONT_SECONDARY, bold=False, box=inner_coords)
+
+		# Fit text to boxes (reduce size if needed)
 
 		# # Calculating coords for text boxes
 		prefix_size = np.subtract(prefix_font.getsize(self.prefix), prefix_font.getoffset(self.prefix))
@@ -137,7 +146,7 @@ class DataBox:
 	def writeDataTitle(self, img): # ...
 		text_color = getGoodTextColor(self.bg_light_color)
 		title_coords = self.getDataTitleCoordinates()
-		title_font = self.generateTextFont(self.data_title,size=DATA_TITLE_FONT,bold=True)
+		title_font = self.generateTextFont(self.data_title,size=DATA_TITLE_FONT,bold=True,box=title_coords)
 		title_size = np.subtract(title_font.getsize(self.data_title), title_font.getoffset(self.data_title))
 		top_pad = ((title_coords[1][1] - title_coords[0][1]) - title_size[1]) / 2
 	
