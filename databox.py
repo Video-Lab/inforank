@@ -184,43 +184,54 @@ class DataBox:
 		return img
 
 	def getDataIcon(self):
-		# Don't include vector icons, max 10, query from data image value
-		url = "https://api.iconfinder.com/v4/icons/search?query=" + self.data_image + "&count=10&vector=0&premium=0"
-
-		# Default value as fallback in case of API error
-		img_url = os.path.abspath("./assets/none.png")
-
-		# Declaration to be used for later
-		img = None
 
 		# Auth from environment variable
 		headers = {'Authorization': 'Bearer ' + ICONFINDER_API_KEY}
 
-		resp = requests.get(url, headers=headers)
+		# Declaration to be used for later
+		img = None
 
-		# Checks if too many requests (HTTP Code 429)
-		while resp.status_code == 429:
+		# Split for multiple terms, remove spaces from each term
+		queries = [query.strip() for query in self.data_image.split(",")]
 
-			# Tries request every second until timeout ends
-			print("Too many requests to IconFinder API. Waiting 1 second...")
-			time.sleep(1)
+		for query in queries:
+
+			# Don't include vector icons, max 10, query from data image value
+			url = "https://api.iconfinder.com/v4/icons/search?query=" + query + "&count=10&vector=0&premium=0"
+
+			# Default value as fallback in case of API error
+			img_url = os.path.abspath("./assets/none.png")
+
 			resp = requests.get(url, headers=headers)
 
-		# Other than OK code
-		if resp.status_code != 200:
+			# Checks if too many requests (HTTP Code 429)
+			while resp.status_code == 429:
+				# Tries request every second until timeout ends
+				print("Too many requests to IconFinder API. Waiting 1 second...")
+				time.sleep(1)
+				resp = requests.get(url, headers=headers)
 
-			# Loads image from fallback URL
-			print("Error in connection with error code " + resp.status_code + ", defaulting to none.png")
-			img = Image.open(img_url).convert("RGBA")
-		
-		else:
-			#Convert to JSON, pull URL to image from largest size raster images, stores all image URLs for preview later
-			resp = resp.json()
-			for icon in resp['icons']:
-				biggest = len(icon['raster_sizes'])-1
-				self.icon_urls.append(icon['raster_sizes'][biggest]['formats'][0]["preview_url"])
-				img_url = self.icon_urls[0]
-				img = self.getDataIconFromURL(img_url).convert("RGBA")
+			# Other than OK code
+			if resp.status_code != 200:
+				# Loads image from fallback URL
+				print("Error in connection with error code " + resp.status_code + ", defaulting to none.png")
+				img = Image.open(img_url).convert("RGBA")
+			
+			else:
+				#Convert to JSON, pull URL to image from largest size raster images, stores all image URLs for preview later
+				resp = resp.json()
+				for icon in resp['icons']:
+					biggest = len(icon['raster_sizes'])-1
+
+					#Checks if icon is under size
+					if icon['raster_sizes'][biggest]['size_width'] < MIN_SIZE[0] or icon['raster_sizes'][biggest]['size_height'] < MIN_SIZE[1]:
+						continue
+
+					self.icon_urls.append(icon['raster_sizes'][biggest]['formats'][0]["preview_url"])
+
+		# Get first icon URL
+		img_url = self.icon_urls[0]
+		img = self.getDataIconFromURL(img_url).convert("RGBA")
 
 		return img
 

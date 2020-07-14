@@ -26,6 +26,7 @@ DATA_VALUE_FONT_MAIN = 120
 TEXT_PADDING = 40 # Pixel padding between lines
 DATA_TITLE_FONT = 55
 IMAGE_PERCENTAGE = (0.9, 0.9) # % of data image box taken up by actual image on x and y axis
+MIN_SIZE = (256, 256) # Minimum data image size
 ICONFINDER_API_KEY = os.environ.get('ICONFINDER_API_KEY') # Environment variable storing IconFinder API key
  
 if not ICONFINDER_API_KEY:

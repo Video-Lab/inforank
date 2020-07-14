@@ -12,6 +12,6 @@ music=./music/whatever.mp3
 
 ||BEGIN_DATA||
 data_value=401k|data_title=One Job|data_image_type=file|data_image=./tests/imgs/databox_base_w_value_sample.png
-data_value=53,234|data_title=Another Job|data_image_type=icon|data_image=gold
+data_value=53,234|data_title=Another Job|data_image_type=icon|data_image=platinum,gold
 data_value=700|data_title=Third Job|data_image_type=icon|data_image=money
 data_value=100,000,000,000|data_title=Loooooooong Text|data_image_type=icon|data_image=uae
