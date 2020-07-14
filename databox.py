@@ -161,13 +161,39 @@ class DataBox:
 
 		return img
 
-	def writeDataImage(self, img):
-		pass
+
+	def getDataImage(self):
+		if self.data_image_type == "file":
+			img = Image.open(os.path.abspath(self.data_image), mode="RGBA")
+		else:
+			print("Getting icon placeholder")
+		return img
+
+	def writeDataImage(self, img, data_img):
+		data_img = self.getDataImage()
+		image_coords = self.getDataImageCoordiantes()
+		w,h = image_coords[1][0] - image_coords[0][0], image_coords[1][1]-image_coords[0][1]
+		newsize = data_img.size
+
+		if data_img.size[0] > w:
+			newsize[0] = IMAGE_PERCENTAGE*w
+		if data_img.size[1] > h:
+			newsize[1] = IMAGE_PERCENTAGE*h
+
+		data_img = data_img.resize(newsize)
+		left_pad = (w-newsize[0])/2
+		top_pad = (h-newsize[1])/2
+
+		img.paste(data_img, [image_coords[0][0]+left_pad, image_coords[0][1]+top_pad])
+		return img
+
 
 	def generateImage(self): # Generates the image as a whole
 		self.image = self.generateImageBase()
 		self.image = self.writeDataValue(self.image)
 		self.image = self.writeDataTitle(self.image)
+		self.image = self.writeDataImage(self.image, self.getDataImage())
+		return self.image
 
 	def outputImage(self, out_path): # Writes image to file at out_path
-		pass
+		self.image.save(os.path.abspath(out_path))

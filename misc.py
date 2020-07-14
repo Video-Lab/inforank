@@ -20,6 +20,7 @@ DATA_VALUE_FONT_SECONDARY = 40
 DATA_VALUE_FONT_MAIN = 120
 TEXT_PADDING = 40 # Pixel padding between lines
 DATA_TITLE_FONT = 55
+IMAGE_PERCENTAGE = (0.8, 0.8) # % of data image box taken up by actual image on x and y axis
 
 
 def hexToRGB(color):
