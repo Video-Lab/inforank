@@ -16,7 +16,6 @@ class Video:
 
 	def previewDataBoxes(self):
 		print("== PREVIEWING DATA BOXES ==\n")
-
 		for data_box in self.data_boxes:
 
 			print(f"Previewing {data_box.data_string}")
@@ -111,3 +110,16 @@ class Video:
 							data_box.data_image = query
 
 					data_box.generateImage()
+						
+	def outputDataBoxes(self, out_dir):
+		for i in range(len(self.data_boxes)):
+			path = os.path.abspath(os.path.join(out_dir, f"{self.raw_title}_databox_{i}.png"))
+			if os.path.exists(path):
+				os.remove(path)
+			self.data_boxes[i].outputImage(path)
+
+	def outputDataBoxFromIndex(self, index, out_dir):
+		path = os.path.abspath(os.path.join(out_dir, f"{self.raw_title}_databox_{index}.png"))
+		if os.path.exists(path):
+			os.remove(path)
+		self.data_boxes[index].outputImage(path)
