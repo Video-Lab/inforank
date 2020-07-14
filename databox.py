@@ -17,6 +17,7 @@ class DataBox:
 		self.suffix = suffix # Text below value
 		self.data_title = data_title # Label
 		self.pad=DATA_VALUE_PADDING_PERCENTAGE*self.data_box_width
+		self.icon_urls = [] # URLs for multiple icons (If needed)
 		if type(color) == str:
 			self.color = hexToRGB(color)
 		else:
@@ -52,23 +53,28 @@ class DataBox:
 		draw.rectangle(self.getOuterDataValueCoordinates(), fill=self.light_color) # Drawing for light color border around value
 		draw.rectangle(self.getInnerDataValueCoordinates(), fill=self.color) # Inner data value box
 		draw.rectangle(self.getDataTitleCoordinates(), fill=self.bg_light_color) # Title strip
-		draw.rectangle(self.getDataImageCoordiantes(), fill=self.bg_color) # Image box
+		draw.rectangle(self.getDataImageCoordinates(), fill=self.bg_color) # Image box
 		return img
 
 	def getOuterDataValueCoordinates(self): # Coordinates for safe data value box
-		return [(0,0) ,(self.data_box_width,DATA_VALUE_PERCENTAGE*self.data_box_height)]
+		return [(0,0) ,(int(self.data_box_width),int(DATA_VALUE_PERCENTAGE*self.data_box_height))]
 
 	def getInnerDataValueCoordinates(self):
-		return [(self.pad,self.pad),(self.data_box_width-self.pad,DATA_VALUE_PERCENTAGE*self.data_box_height-self.pad)]
+		return [(int(self.pad),int(self.pad)),(int(self.data_box_width-self.pad),int(DATA_VALUE_PERCENTAGE*self.data_box_height-self.pad))]
 
 	def getDataTitleCoordinates(self): # Coordinates for data title, ...
 		value_coords = self.getOuterDataValueCoordinates()
-		return [(0,value_coords[1][1]),(self.data_box_width,value_coords[1][1]+(DATA_TITLE_PERCENTAGE*self.data_box_height))]
+		return [(0,value_coords[1][1]),(int(self.data_box_width),int(value_coords[1][1]+(DATA_TITLE_PERCENTAGE*self.data_box_height)))]
 
-	def getDataImageCoordiantes(self):
+	def getDataImageCoordinates(self):
 		title_coords = self.getDataTitleCoordinates()
-		return [(0,title_coords[1][1]),(self.data_box_width,title_coords[1][1]+(DATA_IMAGE_PERCENTAGE*self.data_box_height))]
+		return [(0,title_coords[1][1]),(self.data_box_width,int(title_coords[1][1]+(DATA_IMAGE_PERCENTAGE*self.data_box_height)))]
 
+	def getSafeDataImageCoordinates(self):
+		image_coords = self.getDataImageCoordinates()
+		x_pad = int( (DATA_IMAGE_PADDING_PERCENTAGE*(image_coords[1][0]-image_coords[0][0]))/2 )
+		y_pad = int( (DATA_IMAGE_PADDING_PERCENTAGE*(image_coords[1][1]-image_coords[0][1]))/2 )
+		return [(x_pad,image_coords[0][1]+y_pad),(self.data_box_width-x_pad,int(image_coords[1][1]-y_pad))]
 
 	def generateTextFont(self, text, size, bold, box=None): # Generates a safe font and font size to be used within given coordinates with a given text
 		if not box:
@@ -164,27 +170,63 @@ class DataBox:
 
 	def getDataImage(self):
 		if self.data_image_type == "file":
-			img = Image.open(os.path.abspath(self.data_image), mode="RGBA")
+			img = Image.open(os.path.abspath(self.data_image)).convert("RGBA")
 		else:
-			print("Getting icon placeholder")
+			img = self.getDataIcon()
 		return img
+
+	def getDataIcon(self):
+		url = "https://api.iconfinder.com/v4/icons/search?query=" + self.data_image + "&count=10&vector=0&premium=0" # Don't include vector icons, max 10, query from data image value
+		img_url = os.path.abspath("./assets/none.png")
+		img = None
+		headers = {'Authorization': 'Bearer ' + ICONFINDER_API_KEY}
+		resp = requests.get(url, headers=headers)
+		while resp.status_code == 429:
+			print("Too many requests to IconFinder API. Waiting 1 second...")
+			time.sleep(1)
+			resp = requests.get(url, headers=headers)
+		if resp.status_code != 200:
+			print("Error in connection with error code " + resp.status_code + ", defaulting to none.png")
+			img = Image.open(img_url).convert("RGBA")
+		else:
+			resp = resp.json()
+			for icon in resp['icons']:
+				biggest = len(icon['raster_sizes'])-1
+				self.icon_urls.append(icon['raster_sizes'][biggest]['formats'][0]["preview_url"])
+				img_url = self.icon_urls[0]
+				img = self.getDataIconFromURL(img_url).convert("RGBA")
+
+		return img
+
+	def getDataIconFromURL(self, url):
+		return Image.open(BytesIO(requests.get(url).content))
 
 	def writeDataImage(self, img, data_img):
 		data_img = self.getDataImage()
-		image_coords = self.getDataImageCoordiantes()
+		image_coords = self.getSafeDataImageCoordinates()
 		w,h = image_coords[1][0] - image_coords[0][0], image_coords[1][1]-image_coords[0][1]
-		newsize = data_img.size
+		newsize = list(data_img.size)
+		ratio = newsize[1] / newsize[0]
+		bigger = None
 
 		if data_img.size[0] > w:
-			newsize[0] = IMAGE_PERCENTAGE*w
+			bigger = "w"
 		if data_img.size[1] > h:
-			newsize[1] = IMAGE_PERCENTAGE*h
+			bigger = "h"
+		
+		if bigger == "w":
+			newsize[0] = int(IMAGE_PERCENTAGE[0]*w)
+			newsize[1] = int(ratio*newsize[0])
+		elif bigger == "h":
+			newsize[1] = int(IMAGE_PERCENTAGE[1]*h)
+			newsize[0] = int((1/ratio)*newsize[1])
+
+		# data_img = data_img.resize(newsize)
+		left_pad = int((w-newsize[0])/2)
+		top_pad = int((h-newsize[1])/2)
 
 		data_img = data_img.resize(newsize)
-		left_pad = (w-newsize[0])/2
-		top_pad = (h-newsize[1])/2
-
-		img.paste(data_img, [image_coords[0][0]+left_pad, image_coords[0][1]+top_pad])
+		img.paste(data_img, [image_coords[0][0]+left_pad, image_coords[0][1]+top_pad], mask=data_img)
 		return img
 
 
