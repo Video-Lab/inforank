@@ -18,6 +18,7 @@ class DataBox:
 		self.data_title = data_title # Label
 		self.pad=DATA_VALUE_PADDING_PERCENTAGE*self.data_box_width
 		self.icon_urls = [] # URLs for multiple icons (If needed)
+		self.data_string = "" # Identifier showing prefix, main value, suffix, and title of data box
 		if type(color) == str:
 			self.color = hexToRGB(color)
 		else:
@@ -38,14 +39,35 @@ class DataBox:
 
 		self.dimensions = [self.data_box_width, self.data_box_height]
 		self.light_color = getColorComplement(self.color) # Get lighter color from misc function
-		self.addDataUnit()
+		self.generateDataString()
 		self.generateImage()
 
+	def setDataImageType(self, new_type):
+		self.data_image_type = new_type
+		return self.data_image_type
+
+	def printInformation(self):
+		# Prints information about the data box
+		print(f"=== {self.data_string} ===\n")
+		print(f"Prefix: {self.prefix}\n")
+		print(f"Suffix: {self.suffix}\n")
+		print(f"Unit & Unit place: {self.unit} - {self.unit_place}\n")
+		print(f"Value: {self.data_value}\n")
+		print(f"Title: {self.data_title}\n")
+		print(f"Image & image type: {self.data_image_type} - {self.data_image}\n")
+		print(f"Main color: {self.color}\n")
+		print(f"Light color: {self.light_color}\n")
+		print(f"Title background color: {self.bg_light_color}\n")
+		print(f"Image background color: {self.bg_color}\n")
+		print("=== ===\n\n")
+
 	def addDataUnit(self):
+		#Add unit
 		if self.unit_place == "before":
-			self.data_value = self.unit + self.data_value
+			main = self.unit + self.data_value
 		else:
-			self.data_value += self.unit
+			main = self.data_value + self.unit
+		return main
 
 	def generateImageBase(self): # Base of the image with base colors, no text or images
 		img = Image.new('RGB', self.dimensions) #Create blank image with right dimensions
@@ -142,9 +164,10 @@ class DataBox:
 
 		suffix_coords = [ (main_coords[0][0], main_coords[1][1]+TEXT_PADDING) , (main_coords[1][0], main_coords[1][1]+TEXT_PADDING+suffix_size[1]) ]
 
+		main = self.addDataUnit()
 		#Drawing text
 		img = self.writeText(img, self.prefix, prefix_font, text_color, prefix_coords)
-		img = self.writeText(img, self.data_value, main_font, text_color, main_coords)
+		img = self.writeText(img, main, main_font, text_color, main_coords)
 		img = self.writeText(img, self.suffix, suffix_font, text_color, suffix_coords)
 
 		# Draw borders around text areas (debug only)
@@ -273,6 +296,17 @@ class DataBox:
 
 		return img
 
+	def popDataIcon(self):
+		#Uses next icon URL in list & re-generates image
+		self.icon_urls.pop(0)
+		img_url = self.icon_urls[0]
+		img = self.getDataIconFromURL(img_url).convert("RGBA")
+
+		self.image = self.generateImageBase()
+		self.image = self.writeDataValue(self.image)
+		self.image = self.writeDataTitle(self.image)
+		self.image = self.writeDataImage(self.image, img)
+
 
 	def generateImage(self):
 		# Generates the image as a whole
@@ -285,3 +319,12 @@ class DataBox:
 	def outputImage(self, out_path):
 		# Writes image to file at out_path
 		self.image.save(os.path.abspath(out_path))
+
+	def generateDataString(self):
+		# Generates string with prefix, value, suffix, and title
+		if self.unit_place == "before":
+			main = self.unit + self.data_value
+		else:
+			main = self.data_value + self.unit
+		self.data_string = f"{self.prefix} {main} {self.suffix} - {self.data_title}"
+		return self.data_string
