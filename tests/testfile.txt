@@ -9,6 +9,7 @@ color=
 bg_light_color=
 bg_color=
 music=./music/whatever.mp3
+out_path=
 
 ||BEGIN_DATA||
 data_value=12|data_title=Singer|data_image_type=icon|data_image=sing, singer

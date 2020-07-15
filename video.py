@@ -1,12 +1,13 @@
 from misc import *
 
 class Video:
-	def __init__(self, width, height, title, music, data_boxes):
+	def __init__(self, width, height, title, music, data_boxes, out_path):
 		self.width = int(width)
 		self.height = int(height)
 		self.raw_title = self.generateRawTitle(title) # For filename, etc.
 		self.music = music
 		self.data_boxes = data_boxes # Boxes used in video
+		self.out_path = self.setupDirectoryStructure() # Path to output assets and video to
 
 		self.image = None # Eventual video image
 		self.image_pixels = None # Pixels of image
@@ -127,8 +128,8 @@ class Video:
 	def outputDataBoxes(self, out_dir):
 		debugMessage("Writing data boxes to files")
 		for i in range(len(self.data_boxes)):
-			debugMessage("Writing data box to " + os.path.join(out_dir, f"{self.raw_title}_databox_{i}.png"))
-			path = os.path.abspath(os.path.join(out_dir, f"{self.raw_title}_databox_{i}.png"))
+			debugMessage("Writing data box to " + os.path.join(out_dir, f"{self.raw_title}_data_box_{i}.png"))
+			path = os.path.abspath(os.path.join(out_dir, f"{self.raw_title}_data_box_{i}.png"))
 			if os.path.exists(path):
 				os.remove(path)
 			self.data_boxes[i].outputImage(path)
@@ -158,7 +159,6 @@ class Video:
 			x += self.data_boxes[i].data_box_width + gap
 		
 		return img
-			
 
 	def generateVideoImage(self):
 		debugMessage("Generating video image base")
@@ -204,51 +204,6 @@ class Video:
 
 	def setFade(self, direction):
 		debugMessage(f"Setting {direction}-fade")
-		# # Creates frames for a fade, either in or out
-		# debugMessage(f"Setting fade for direction {direction}")
-
-		# # Get number of frames from FPS and fade time set in settings
-		# num_fade_frames = int(FPS*FADE_TIME)
-
-
-		# # Base frame either beginning or end based on dir
-		# if direction == "in":
-		# 	base_frame = self.frames[0]
-
-		# elif direction == "out":
-		# 	base_frame = self.frames[len(self.frames)-1]
-
-		# # Empty frame array based on shape of base frame
-		# fade_frames = np.empty((num_fade_frames, *base_frame.shape))
-
-		# # Loop through number of frames, set up percentage completion
-		# for i in range(num_fade_frames):
-		# 	percentage = i/num_fade_frames
-
-		# 	debugMessage(f"{direction}-fade {percentage*100}% complete")
-			
-		# 	# Loop through each pixel
-		# 	for row in range(len(base_frame)):
-		# 		for column in range(len(base_frame[row])):
-					
-		# 			# If in, move from fade color to pixel color based on %, set frame pixel to that value
-		# 			if direction == "in":
-		# 				fade_frames[i][row][column] = [ math.floor( percentBetweenNumbers(FADE_COLOR[v],base_frame[row][column][v],percentage) ) for v in range(len(base_frame[row][column])) ]
-
-		# 			# If out, move from PIXEL COLOR to fade color instead.
-		# 			elif direction == "out":
-		# 				fade_frames[i][row][column] = [ math.floor( percentBetweenNumbers(base_frame[row][column][v],FADE_COLOR[v],percentage) ) for v in range(len(base_frame[row][column])) ]
-
-		# # If in, add frames to fade frames
-		# if direction == "in":
-		# 	self.frames = np.concatenate((fade_frames, self.frames), axis=0)
-
-		# # For out, reversed
-		# elif direction == "out":
-		# 	self.frames = np.concatenate((self.frames, fade_frames), axis=0)
-
-		# return self.frames
-
 		if direction == "in":
 			self.clip.fx(vfx.fadein, duration=FADE_TIME, initial_color=FADE_COLOR)
 		
@@ -259,15 +214,37 @@ class Video:
 
 	def generateVideoClipFromFrames(self):
 		debugMessage("Creating video clip")
-		self.clip = ImageSequenceClip(self.frames, fps=FPS).set_audio(AudioFileClip(os.path.abspath(self.music)))
+		self.clip = ImageSequenceClip(self.frames, fps=FPS)
+		if music != "":
+			audio_clip = AudioFileClip(os.path.abspath(self.music))
+			audio_clip = concatenate_audioclips([audio for i in range(math.ceil(float(self.clip.duration)/float(audio.duration)))])
+			audio_clip = audio_clip.set_duration(self.clip.duration)
+			self.clip = self.clip.set_audio()
+			
 		return self.clip
 
 	def outputVideo(self):
 		debugMessage("Outputting video")
-		if not os.path.exists("./inforank"):
-			os.mkdir("./inforank")
-		
-		os.mkdir(f"./inforank/{self.raw_title}")
 
 		if self.clip:
-			self.clip.write_videofile(f"./inforank/{self.raw_title}/video.mp4", **WRITE_SETTINGS)
+			self.clip.write_videofile(os.path.join(self.out_path, "video.mp4"), **WRITE_SETTINGS)
+
+	def setupDirectoryStructure(self, out_path):
+		if not os.path.exists(os.path.join(out_path, "inforank/")):
+					os.mkdir(os.path.join(out_path, "inforank"))
+		
+		os.mkdir(os.path.join(out_path, "inforank", self.raw_title))
+		self.out_path = os.path.join(out_path, "inforank", self.raw_title)
+		return self.out_path
+
+	def generateVideo(self):
+		self.previewDataBoxes()
+		debugMessage("Generating full video")
+		self.generateVideoImage()
+		self.generateVideoFrames()
+		self.generateVideoClipFromFrames()
+		self.setFade("in")
+		self.setFade("out")
+		self.outputDataBoxes(os.path.join(self.out_path, "data_boxes"))
+		self.outputVideoImage(os.path.join(self.out_path, "video_image.png"))
+		self.outputVideo()

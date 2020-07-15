@@ -5,7 +5,7 @@ import time
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 import math
-from moviepy import ImageSequenceClip, AudioFileClip
+from moviepy import ImageSequenceClip, AudioFileClip, concatenate_audioclips
 from moviepy.editor import *
 from .settings import *
  
