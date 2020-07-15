@@ -4,6 +4,7 @@ import requests
 import time
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
+import math
 
 # Constants for general info, user-specfic global data, etc.
 DEFAULTS = {'prefix': '', 'width': 1920, 'title': '', 'unit': '', 'unit_place': 'after', 'prefix': '', 'suffix': '', 'color': (21, 64, 16),
@@ -29,6 +30,10 @@ DATA_TITLE_FONT = 55
 IMAGE_PERCENTAGE = (0.9, 0.9) # % of data image box taken up by actual image on x and y axis
 MIN_SIZE = (256, 256) # Minimum data image size
 ICONFINDER_API_KEY = os.environ.get('ICONFINDER_API_KEY') # Environment variable storing IconFinder API key
+PPF = 3 # Number of pixels to shift per frame
+FADE_TIME = 0.1 # Number of seconds to fade in
+FADE_COLOR = (0,0,0) # Base color for fades
+DEBUG = True # Print debug messages
  
 if not ICONFINDER_API_KEY:
 	raise ValueError("IconFinder API key not found.")
@@ -81,3 +86,12 @@ def getGoodTextColor(color): # Gives a good color for drawing text based on give
 	if return_hex:
 		return RGBToHex(return_color)
 	return return_color
+
+def percentBetweenNumbers(a,b,p):
+	# Create linear graph from (0,a) to (0,b), use function to calculate value from percentage (0 -> 1)
+	return ((b-a)*p)+a
+
+def debugMessage(m):
+	# Prints message if debug is true
+	if DEBUG:
+		print(m)

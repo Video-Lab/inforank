@@ -9,6 +9,8 @@ class Video:
 		self.data_boxes = data_boxes # Boxes used in video
 
 		self.image = None # Eventual video image
+		self.image_pixels = None # Pixels of image
+		self.frames = [] # Array used to store frames for video
 		self.dimensions = [width, height]
 		self.title = self.generateTitle() # For video upload / 'pretty title'
 
@@ -150,3 +152,79 @@ class Video:
 
 	def outputVideoImage(self, out_path):
 		self.image.save(os.path.abspath(out_path))
+
+	def generateVideoFrames(self):
+		# Generates the frames used to create the video
+		self.image_pixels = np.array(self.image.getdata()) # Gets pixel values of image
+
+		#Resize to rows-columns-colors shape
+		self.image_pixels = self.image_pixels.reshape( (self.image.size[1], self.image.size[0], 4) )
+		shape = self.image_pixels.shape
+
+		#Markers for sliding window
+		x1 = 0
+		x2 = self.width
+
+		# While right marker not at end
+		while x2 < shape[1]:
+
+			#Slice of image to fit video dimensions, remove alpha component
+			self.frames.append(self.image_pixels[0:shape[0],x1:x2,:3])
+
+			# If the right marker is closer to the end than the ppf value, add remaining pixel value
+			if shape[1]-x2 < PPF:
+				x1 += shape[1]-x2
+				x2 += shape[1]-x2
+
+			# Otherwise, shift normally
+			else:
+				x1 += PPF
+				x2 += PPF
+		
+		return self.frames
+
+	def setFade(self, direction):
+		# Creates frames for a fade, either in or out
+		debugMessage(f"Setting fade for direction {direction}")
+
+		# Get number of frames from FPS and fade time set in settings
+		num_fade_frames = int(FPS*FADE_TIME)
+
+
+		# Base frame either beginning or end based on dir
+		if direction == "in":
+			base_frame = self.frames[0]
+
+		elif direction == "out":
+			base_frame = self.frames[len(self.frames)-1]
+
+		# Empty frame array based on shape of base frame
+		fade_frames = np.empty((num_fade_frames, *base_frame.shape))
+
+		# Loop through number of frames, set up percentage completion
+		for i in range(num_fade_frames):
+			percentage = i/num_fade_frames
+
+			debugMessage(f"{direction}-fade {percentage*100}% complete")
+			
+			# Loop through each pixel
+			for row in range(len(base_frame)):
+				for column in range(len(base_frame[row])):
+					
+					# If in, move from fade color to pixel color based on %, set frame pixel to that value
+					if direction == "in":
+						fade_frames[i][row][column] = [ math.floor( percentBetweenNumbers(FADE_COLOR[v],base_frame[row][column][v],percentage) ) for v in range(len(base_frame[row][column])) ]
+
+					# If out, move from PIXEL COLOR to fade color instead.
+					elif direction == "out":
+						fade_frames[i][row][column] = [ math.floor( percentBetweenNumbers(base_frame[row][column][v],FADE_COLOR[v],percentage) ) for v in range(len(base_frame[row][column])) ]
+
+		# If in, add frames to fade frames
+		if direction == "in":
+			self.frames = np.concatenate((fade_frames, self.frames), axis=0)
+
+		# For out, reversed
+		elif direction == "out":
+			self.frames = np.concatenate((self.frames, fade_frames), axis=0)
+
+		return self.frames
