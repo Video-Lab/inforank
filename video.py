@@ -4,18 +4,26 @@ class Video:
 	def __init__(self, width, height, title, music, data_boxes):
 		self.width = int(width)
 		self.height = int(height)
-		self.raw_title = title # For filename, etc.
+		self.raw_title = self.generateRawTitle(title) # For filename, etc.
 		self.music = music
 		self.data_boxes = data_boxes # Boxes used in video
 
 		self.image = None # Eventual video image
 		self.image_pixels = None # Pixels of image
 		self.frames = [] # Array used to store frames for video
+		self.clip = None # Video clip to be used
 		self.dimensions = [width, height]
-		self.title = self.generateTitle() # For video upload / 'pretty title'
+		self.title = self.generateTitle(title) # For video upload / 'pretty title'
 
-	def generateTitle(self):
-		return f"Data Comparison: {self.raw_title} | {CHANNEL_NAME}" # Constant from misc file
+	def generateRawTitle(self, title):
+		new_title = title
+		for forbidden in "\\/:*?\"<>|":
+			new_title.replace(forbidden, "_")
+
+		return new_title.lower().replace(" ", "_")
+
+	def generateTitle(self, title):
+		return f"Data Comparison: {title} | {CHANNEL_NAME}" # Constant from misc file
 
 	def previewDataBoxes(self):
 		print("== PREVIEWING DATA BOXES ==\n")
@@ -184,47 +192,68 @@ class Video:
 		return self.frames
 
 	def setFade(self, direction):
-		# Creates frames for a fade, either in or out
-		debugMessage(f"Setting fade for direction {direction}")
+		# # Creates frames for a fade, either in or out
+		# debugMessage(f"Setting fade for direction {direction}")
 
-		# Get number of frames from FPS and fade time set in settings
-		num_fade_frames = int(FPS*FADE_TIME)
+		# # Get number of frames from FPS and fade time set in settings
+		# num_fade_frames = int(FPS*FADE_TIME)
 
 
-		# Base frame either beginning or end based on dir
-		if direction == "in":
-			base_frame = self.frames[0]
+		# # Base frame either beginning or end based on dir
+		# if direction == "in":
+		# 	base_frame = self.frames[0]
 
-		elif direction == "out":
-			base_frame = self.frames[len(self.frames)-1]
+		# elif direction == "out":
+		# 	base_frame = self.frames[len(self.frames)-1]
 
-		# Empty frame array based on shape of base frame
-		fade_frames = np.empty((num_fade_frames, *base_frame.shape))
+		# # Empty frame array based on shape of base frame
+		# fade_frames = np.empty((num_fade_frames, *base_frame.shape))
 
-		# Loop through number of frames, set up percentage completion
-		for i in range(num_fade_frames):
-			percentage = i/num_fade_frames
+		# # Loop through number of frames, set up percentage completion
+		# for i in range(num_fade_frames):
+		# 	percentage = i/num_fade_frames
 
-			debugMessage(f"{direction}-fade {percentage*100}% complete")
+		# 	debugMessage(f"{direction}-fade {percentage*100}% complete")
 			
-			# Loop through each pixel
-			for row in range(len(base_frame)):
-				for column in range(len(base_frame[row])):
+		# 	# Loop through each pixel
+		# 	for row in range(len(base_frame)):
+		# 		for column in range(len(base_frame[row])):
 					
-					# If in, move from fade color to pixel color based on %, set frame pixel to that value
-					if direction == "in":
-						fade_frames[i][row][column] = [ math.floor( percentBetweenNumbers(FADE_COLOR[v],base_frame[row][column][v],percentage) ) for v in range(len(base_frame[row][column])) ]
+		# 			# If in, move from fade color to pixel color based on %, set frame pixel to that value
+		# 			if direction == "in":
+		# 				fade_frames[i][row][column] = [ math.floor( percentBetweenNumbers(FADE_COLOR[v],base_frame[row][column][v],percentage) ) for v in range(len(base_frame[row][column])) ]
 
-					# If out, move from PIXEL COLOR to fade color instead.
-					elif direction == "out":
-						fade_frames[i][row][column] = [ math.floor( percentBetweenNumbers(base_frame[row][column][v],FADE_COLOR[v],percentage) ) for v in range(len(base_frame[row][column])) ]
+		# 			# If out, move from PIXEL COLOR to fade color instead.
+		# 			elif direction == "out":
+		# 				fade_frames[i][row][column] = [ math.floor( percentBetweenNumbers(base_frame[row][column][v],FADE_COLOR[v],percentage) ) for v in range(len(base_frame[row][column])) ]
 
-		# If in, add frames to fade frames
+		# # If in, add frames to fade frames
+		# if direction == "in":
+		# 	self.frames = np.concatenate((fade_frames, self.frames), axis=0)
+
+		# # For out, reversed
+		# elif direction == "out":
+		# 	self.frames = np.concatenate((self.frames, fade_frames), axis=0)
+
+		# return self.frames
+
 		if direction == "in":
-			self.frames = np.concatenate((fade_frames, self.frames), axis=0)
-
-		# For out, reversed
+			self.clip.fx(vfx.fadein, duration=FADE_TIME, initial_color=FADE_COLOR)
+		
 		elif direction == "out":
-			self.frames = np.concatenate((self.frames, fade_frames), axis=0)
+			self.clip.fx(vfx.fadeout, duration=FADE_TIME, initial_color=FADE_COLOR)
+		
+		return self.clip
 
-		return self.frames
+	def generateVideoClipFromFrames(self):
+		self.clip = ImageSequenceClip(self.frames, fps=FPS).set_audio(AudioFileClip(os.path.abspath(self.music)))
+		return self.clip
+
+	def outputVideo(self):
+		if not os.path.exists("./inforank"):
+			os.mkdir("./inforank")
+		
+		os.mkdir(f"./inforank/{self.raw_title}")
+
+		if self.clip:
+			self.clip.write_videofile(f"./inforank/{self.raw_title}/video.mp4", **WRITE_SETTINGS)

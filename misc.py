@@ -5,6 +5,8 @@ import time
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 import math
+from moviepy import ImageSequenceClip, AudioFileClip
+from moviepy.editor import *
 
 # Constants for general info, user-specfic global data, etc.
 DEFAULTS = {'prefix': '', 'width': 1920, 'title': '', 'unit': '', 'unit_place': 'after', 'prefix': '', 'suffix': '', 'color': (21, 64, 16),
@@ -34,6 +36,7 @@ PPF = 3 # Number of pixels to shift per frame
 FADE_TIME = 0.1 # Number of seconds to fade in
 FADE_COLOR = (0,0,0) # Base color for fades
 DEBUG = True # Print debug messages
+WRITE_SETTINGS = {'codec': "libx264", 'bitrate': '5000k', 'ffmpeg_params': ['-crf', '18'], 'fps': FPS} # Video file settings for output.
  
 if not ICONFINDER_API_KEY:
 	raise ValueError("IconFinder API key not found.")
