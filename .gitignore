@@ -6,3 +6,4 @@ assets/*
 *.png
 __pycache__/*
 .vs/*
+.VSCodeCounter/*

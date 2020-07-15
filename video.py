@@ -16,6 +16,7 @@ class Video:
 		self.title = self.generateTitle(title) # For video upload / 'pretty title'
 
 	def generateRawTitle(self, title):
+		debugMessage("Generating raw title")
 		new_title = title
 		for forbidden in "\\/:*?\"<>|":
 			new_title.replace(forbidden, "_")
@@ -23,6 +24,7 @@ class Video:
 		return new_title.lower().replace(" ", "_")
 
 	def generateTitle(self, title):
+		debugMessage("Generating main title")
 		return f"Data Comparison: {title} | {CHANNEL_NAME}" # Constant from misc file
 
 	def previewDataBoxes(self):
@@ -123,25 +125,30 @@ class Video:
 					data_box.generateImage()
 
 	def outputDataBoxes(self, out_dir):
+		debugMessage("Writing data boxes to files")
 		for i in range(len(self.data_boxes)):
+			debugMessage("Writing data box to " + os.path.join(out_dir, f"{self.raw_title}_databox_{i}.png"))
 			path = os.path.abspath(os.path.join(out_dir, f"{self.raw_title}_databox_{i}.png"))
 			if os.path.exists(path):
 				os.remove(path)
 			self.data_boxes[i].outputImage(path)
 
 	def outputDataBoxFromIndex(self, index, out_dir):
+		debugMessage("Outputting data box to " + out_dir + " at index " + index)
 		path = os.path.abspath(os.path.join(out_dir, f"{self.raw_title}_databox_{index}.png"))
 		if os.path.exists(path):
 			os.remove(path)
 		self.data_boxes[index].outputImage(path)
 
 	def generateVideoImageBase(self):
+		debugMessage("Generating video image base")
 		# Generates base of image used to create video frames
 		size = ( int( ( len(self.data_boxes) * (DATA_BOX_PERCENTAGE*self.width) ) + ( (len(self.data_boxes)+1) * (GAP_PERCENTAGE*self.width) ) ) , int(self.height) )
 		img = Image.new("RGBA",size,getColorComplement(self.data_boxes[0].bg_color, shift=-25))
 		return img
 	
 	def fillVideoImage(self, img):
+		debugMessage("Filling video image")
 		# Place data box images on the video image
 		gap = int(GAP_PERCENTAGE*self.width)
 		x = gap
@@ -154,14 +161,17 @@ class Video:
 			
 
 	def generateVideoImage(self):
+		debugMessage("Generating video image base")
 		self.image = self.generateVideoImageBase()
 		self.image = self.fillVideoImage(self.image)
 		return self.image
 
 	def outputVideoImage(self, out_path):
+		debugMessage("Outputting video image to " + out_path)
 		self.image.save(os.path.abspath(out_path))
 
 	def generateVideoFrames(self):
+		debugMessage("Generating video frames")
 		# Generates the frames used to create the video
 		self.image_pixels = np.array(self.image.getdata()) # Gets pixel values of image
 
@@ -172,10 +182,11 @@ class Video:
 		#Markers for sliding window
 		x1 = 0
 		x2 = self.width
+		number = 1
 
 		# While right marker not at end
 		while x2 < shape[1]:
-
+			debugMessage("Generating frame " + number)
 			#Slice of image to fit video dimensions, remove alpha component
 			self.frames.append(self.image_pixels[0:shape[0],x1:x2,:3])
 
@@ -192,6 +203,7 @@ class Video:
 		return self.frames
 
 	def setFade(self, direction):
+		debugMessage(f"Setting {direction}-fade")
 		# # Creates frames for a fade, either in or out
 		# debugMessage(f"Setting fade for direction {direction}")
 
@@ -246,10 +258,12 @@ class Video:
 		return self.clip
 
 	def generateVideoClipFromFrames(self):
+		debugMessage("Creating video clip")
 		self.clip = ImageSequenceClip(self.frames, fps=FPS).set_audio(AudioFileClip(os.path.abspath(self.music)))
 		return self.clip
 
 	def outputVideo(self):
+		debugMessage("Outputting video")
 		if not os.path.exists("./inforank"):
 			os.mkdir("./inforank")
 		

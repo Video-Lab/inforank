@@ -40,6 +40,7 @@ WRITE_SETTINGS = {'codec': "libx264", 'bitrate': '5000k', 'ffmpeg_params': ['-cr
  
 if not ICONFINDER_API_KEY:
 	raise ValueError("IconFinder API key not found.")
+
 def hexToRGB(color):
 	if color[0] == "#":
 		color = color[1:] # Remove hash
@@ -48,22 +49,6 @@ def hexToRGB(color):
 
 def RGBToHex(color):
 	return "#" + hex(color[0])[2:] + hex(color[1])[2:] + hex(color[2])[2:] # Remove 0x at start
-
-# def hexToDec(hex_val):
-# 	hex_val = hex_val.lower()
-# 	hex_values = "abcdef"
-# 	hex_map = {hex_val[i]: i+10 for i in range(len(hex_val))}
-# 	for i in range(10):
-# 		hex_map[str(i)] = i 
-# 	return sum([16**(len(hex_val)-i) * hex_map[str(char)] for char in hex_val])
-
-# def decToHex(dec):
-# 	hex_val = hex_val.lower()
-# 	hex_values = "abcdef"
-# 	hex_map = {hex_val[i]: i+10 for i in range(len(hex_val))}
-# 	for i in range(10):
-# 		hex_map[str(i)] = i 
-	
 
 def getColorComplement(color, shift=45):
 	if type(color) == str:
@@ -74,7 +59,6 @@ def getColorComplement(color, shift=45):
 
 def getPairsInList(pair_set, target_list):
 	return {k:v for k,v in pair_set.items() if k in target_list}
-
 
 def getGoodTextColor(color): # Gives a good color for drawing text based on given color.
 	return_hex = False

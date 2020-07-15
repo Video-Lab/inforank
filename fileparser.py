@@ -3,7 +3,7 @@ from video import Video
 from databox import DataBox
 
 def parseFile(path):
-
+	debugMessage("Parsing data file at " + path)
 	errorCheckFile(path)
 	begin_settings_index, end_settings_index, begin_data_index, end_data_index = getFileIndexes(path)
 
@@ -25,8 +25,6 @@ def parseFile(path):
 			if settings[k] == '':
 				settings[k] = DEFAULTS[k]
 
-
-
 		settings['data_box_height'] = settings['height']
 		settings['data_box_width'] = DataBox.calculateDataBoxWidth(settings['width'])
 
@@ -37,8 +35,6 @@ def parseFile(path):
 		video = Video(**video_settings, data_boxes=data_boxes) # Unpack settings, convert to video class
 
 		return video
-
-
 
 def getFileIndexes(path):
 	with open(path, 'r') as f:
@@ -52,7 +48,6 @@ def getFileIndexes(path):
 				begin_data_index = i+1
 				end_settings_index = i-1
 	return [begin_settings_index, end_settings_index, begin_data_index, end_data_index]
-
 
 def errorCheckFile(path):
 	with open(path, 'r') as f:
