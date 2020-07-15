@@ -2,9 +2,10 @@ from importlib import import_module
 from sys import modules
 
 # Testing info
-TESTS = [ ["generateAndTestDataBoxes", {'path': './tests/testfile.txt', 'out_dir': './tests/imgs/'}] ]
+TESTS = [  ["generateVideoImage", {'path': './tests/testfile.txt', 'out_dir': './tests/imgs/videoimage.png'}]]
 OLD_TESTS = [["parseFileTest", {'path': './tests/testfile.txt'}],
-["generateImageTest", {'path': './tests/testfile.txt', 'test_path': './tests/imgs/databox_base_w_value_sample.png'}]]
+["generateImageTest", {'path': './tests/testfile.txt', 'test_path': './tests/imgs/databox_base_w_value_sample.png'}],
+["generateAndTestDataBoxes", {'path': './tests/testfile.txt', 'out_dir': './tests/imgs/'}]]
 
 def parseFile(path):
 	import fileparser
@@ -45,6 +46,10 @@ def generateAndTestDataBoxes(path, out_dir):
 	generateDataBoxesFromVideo(video, out_dir)
 	video.previewDataBoxes()
 
+def generateVideoImage(path, out_dir):
+	video = parseFile(path)
+	video.generateVideoImage()
+	video.outputVideoImage(out_dir)
 	
 if __name__ == "__main__":
 	for test in TESTS:

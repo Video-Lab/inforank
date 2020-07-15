@@ -1,5 +1,4 @@
 from misc import *
-from PIL import Image, ImageDraw, ImageFont
 
 class DataBox:
 

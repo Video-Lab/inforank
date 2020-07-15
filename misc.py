@@ -3,6 +3,7 @@ import os
 import requests
 import time
 from io import BytesIO
+from PIL import Image, ImageDraw, ImageFont
 
 # Constants for general info, user-specfic global data, etc.
 DEFAULTS = {'prefix': '', 'width': 1920, 'title': '', 'unit': '', 'unit_place': 'after', 'prefix': '', 'suffix': '', 'color': (21, 64, 16),
@@ -10,7 +11,7 @@ DEFAULTS = {'prefix': '', 'width': 1920, 'title': '', 'unit': '', 'unit_place': 
 FPS = 60 # Frames per second
 CHANNEL_NAME = "InfoRank"
 NUM_BOXES = 4 # "Number of boxes that can fit on the screen"
-GAP_PERCENTAGE = 0.05 # % of video width taken up by a gap
+GAP_PERCENTAGE = 0.01 # % of video width taken up by a gap
 DATA_BOX_PERCENTAGE = (1/NUM_BOXES)-((GAP_PERCENTAGE*(NUM_BOXES-1))/NUM_BOXES) #  % of width taken up by single data box
 DATA_VALUE_PERCENTAGE = 0.50
 DATA_TITLE_PERCENTAGE = 0.08
@@ -59,9 +60,9 @@ def RGBToHex(color):
 def getColorComplement(color, shift=45):
 	if type(color) == str:
 		color = hexToRGB(color)
-		return RGBToHex([min(255,c+shift) for c in color]) # Add to RGB compoenents, cap at 255
+		return RGBToHex([max(0, min(255,c+shift)) for c in color]) # Add to RGB compoenents, cap at 255
 	else:
-		return tuple([min(255,c+shift) for c in color]) # Same but no conversion to rgb tuple
+		return tuple([max(0, min(255,c+shift)) for c in color]) # Same but no conversion to rgb tuple
 
 def getPairsInList(pair_set, target_list):
 	return {k:v for k,v in pair_set.items() if k in target_list}

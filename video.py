@@ -2,12 +2,13 @@ from misc import *
 
 class Video:
 	def __init__(self, width, height, title, music, data_boxes):
-		self.width = width
-		self.height = height
+		self.width = int(width)
+		self.height = int(height)
 		self.raw_title = title # For filename, etc.
 		self.music = music
 		self.data_boxes = data_boxes # Boxes used in video
 
+		self.image = None # Eventual video image
 		self.dimensions = [width, height]
 		self.title = self.generateTitle() # For video upload / 'pretty title'
 
@@ -110,7 +111,7 @@ class Video:
 							data_box.data_image = query
 
 					data_box.generateImage()
-						
+
 	def outputDataBoxes(self, out_dir):
 		for i in range(len(self.data_boxes)):
 			path = os.path.abspath(os.path.join(out_dir, f"{self.raw_title}_databox_{i}.png"))
@@ -123,3 +124,29 @@ class Video:
 		if os.path.exists(path):
 			os.remove(path)
 		self.data_boxes[index].outputImage(path)
+
+	def generateVideoImageBase(self):
+		# Generates base of image used to create video frames
+		size = ( int( ( len(self.data_boxes) * (DATA_BOX_PERCENTAGE*self.width) ) + ( (len(self.data_boxes)+1) * (GAP_PERCENTAGE*self.width) ) ) , int(self.height) )
+		img = Image.new("RGBA",size,getColorComplement(self.data_boxes[0].bg_color, shift=-25))
+		return img
+	
+	def fillVideoImage(self, img):
+		# Place data box images on the video image
+		gap = int(GAP_PERCENTAGE*self.width)
+		x = gap
+
+		for i in range(len(self.data_boxes)):
+			img.paste(self.data_boxes[i].image, (x,0))
+			x += self.data_boxes[i].data_box_width + gap
+		
+		return img
+			
+
+	def generateVideoImage(self):
+		self.image = self.generateVideoImageBase()
+		self.image = self.fillVideoImage(self.image)
+		return self.image
+
+	def outputVideoImage(self, out_path):
+		self.image.save(os.path.abspath(out_path))
