@@ -1,8 +1,8 @@
-from fileparser import *
+from video import Video
 import argparse
 
 def generateVideo(file, preview):
-    video = parseFile(file)
+    video = Video.fromFile(file)
     video.generateVideo(preview)
 
 if __name__ == "__main__":

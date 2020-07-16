@@ -11,28 +11,28 @@ OLD_TESTS = [["parseFileTest", {'path': './tests/testfile.txt'}],
 ["writeVideoFramesToImages", {'path': './tests/testfile.txt', 'out_dir': './tests/imgs/frames/'}]]
 
 def parseFile(path):
-	import fileparser
-	video = fileparser.parseFile(path)
+	from video import Video
+	video = Video.fromFile(path)
 	return video
 
 def generateImageBaseTest(path, test_path):
-	import fileparser
+	from video import Video
 	from databox import DataBox
-	video = fileparser.parseFile(path)
+	video = Video.fromFile(path)
 	img = video.data_boxes[0].generateImageBase()
 	img.save(test_path)
 
 def generateImageTest(path, test_path):
-	import fileparser
+	from video import Video
 	from databox import DataBox
-	video = fileparser.parseFile(path)
+	video = Video.fromFile(path)
 	video.data_boxes[0].image.save(test_path)
 
 def generateDataBoxes(path, out_dir):
-	import fileparser
+	from video import Video
 	from databox import DataBox
 	import os
-	video = fileparser.parseFile(path)
+	video = Video.fromFile(path)
 	generateDataBoxesFromVideo(video, out_dir)
 
 def generateDataBoxesFromVideo(video, out_dir):
@@ -69,7 +69,7 @@ def writeVideoFramesToImages(path, out_dir, num_frames=100):
 	video.generateVideoFrames()
 	video.setFade("in")
 	video.setFade("out")
-	
+
 	for f in range(min(len(video.frames), num_frames)):
 		img = Image.fromarray(np.uint8(video.frames[f])).save(os.path.abspath(os.path.join(out_dir, f"frame_{f}.png")))
 
