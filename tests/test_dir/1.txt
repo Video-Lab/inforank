@@ -1,0 +1,21 @@
+width=1920
+height=1080
+title=Highest-Paying Jobs
+unit=
+unit_place=before
+prefix=RANK
+suffix=RANK_DATA_BOXES
+color=
+bg_light_color=
+bg_color=
+gap_color=
+music=./tests/test.mp3
+out_path=
+
+||BEGIN_DATA||
+data_value=12|data_title=Singer|data_image_type=icon|data_image=microphone
+data_value=39|data_title=Dancer|data_image_type=icon|data_image=dancing
+data_value=112|data_title=Engineer|data_image_type=icon|data_image=wrench
+data_value=1,024|data_title=CEO|data_image_type=icon|data_image=businessman, business, tower
+data_value=15,024|data_title=Python Engineer|data_image_type=icon|data_image=python
+data_value=9,412,340|data_title=Photographer|data_image_type=icon|data_image=camera

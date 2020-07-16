@@ -73,10 +73,6 @@ class Video:
 
 			return video
 
-	@classmethod
-	def fromState(cls, path):
-		pass
-
 	def __init__(self, width, height, title, music, data_boxes, out_path, gap_color):
 		self.width = int(width)
 		self.height = int(height)
@@ -103,15 +99,6 @@ class Video:
 	def generateTitle(self, title):
 		debugMessage("Generating main title")
 		return f"Data Comparison: {title} | {CHANNEL_NAME}" # Constant from misc file
-
-	# def rankDataBoxes(self):
-	# 	for i in range(len(self.data_boxes)):
-	# 		if self.data_boxes[i].prefix == "RANK_DATA_BOXES":
-	# 			self.data_boxes[i].setPrefix(str(len(self.data_boxes)-i))
-	# 			print(self.data_boxes[i].prefix)
-
-	# 		if self.data_boxes[i].suffix == "RANK_DATA_BOXES":
-	# 			self.data_boxes[i].setSuffix(str(len(self.data_boxes)-i))
 
 	def previewDataBoxes(self):
 		print("== PREVIEWING DATA BOXES ==\n")
@@ -363,6 +350,3 @@ class Video:
 			info += "\n=== ===\n\n"
 		with open(os.path.join(self.out_path, "info.txt"), "w+") as f:
 			f.write(info)
-
-	def saveState(self, name="save.txt"):
-		pass

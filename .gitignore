@@ -9,3 +9,4 @@ __pycache__/*
 .VSCodeCounter/*
 inforank/*
 tests/*.mp3
+.vscode/*
