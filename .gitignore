@@ -8,3 +8,4 @@ __pycache__/*
 .vs/*
 .VSCodeCounter/*
 inforank/*
+tests/*.mp3

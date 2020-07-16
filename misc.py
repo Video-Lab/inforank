@@ -5,10 +5,11 @@ import time
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 import math
-from moviepy import ImageSequenceClip, AudioFileClip, concatenate_audioclips
 from moviepy.editor import *
-from .settings import *
+from settings import *
  
+ICONFINDER_API_KEY = os.environ.get('ICONFINDER_API_KEY') # Environment variable storing IconFinder API key
+
 if not ICONFINDER_API_KEY:
 	raise ValueError("IconFinder API key not found.")
 

@@ -7,7 +7,7 @@ class Video:
 		self.raw_title = self.generateRawTitle(title) # For filename, etc.
 		self.music = music
 		self.data_boxes = data_boxes # Boxes used in video
-		self.out_path = self.setupDirectoryStructure() # Path to output assets and video to
+		self.out_path = self.setupDirectoryStructure(out_path) # Path to output assets and video to
 
 		self.image = None # Eventual video image
 		self.image_pixels = None # Pixels of image
@@ -126,6 +126,10 @@ class Video:
 					data_box.generateImage()
 
 	def outputDataBoxes(self, out_dir):
+
+		if not os.path.exists(out_dir):
+			os.mkdir(out_dir)
+
 		debugMessage("Writing data boxes to files")
 		for i in range(len(self.data_boxes)):
 			debugMessage("Writing data box to " + os.path.join(out_dir, f"{self.raw_title}_data_box_{i}.png"))
@@ -186,7 +190,7 @@ class Video:
 
 		# While right marker not at end
 		while x2 < shape[1]:
-			debugMessage("Generating frame " + number)
+			debugMessage("Generating frame " + str(number))
 			#Slice of image to fit video dimensions, remove alpha component
 			self.frames.append(self.image_pixels[0:shape[0],x1:x2,:3])
 
@@ -199,29 +203,40 @@ class Video:
 			else:
 				x1 += PPF
 				x2 += PPF
+			number += 1
 		
 		return self.frames
 
 	def setFade(self, direction):
 		debugMessage(f"Setting {direction}-fade")
 		if direction == "in":
-			self.clip.fx(vfx.fadein, duration=FADE_TIME, initial_color=FADE_COLOR)
+			base_frame = self.frames[0]
+			self.clip = concatenate_videoclips([ ImageSequenceClip([base_frame for i in range(FPS*FADE_TIME)], fps=FPS), self.clip ])
+			self.clip = self.clip.fx(vfx.fadein, duration=FADE_TIME, initial_color=FADE_COLOR)
+			self.setMusic()
 		
 		elif direction == "out":
-			self.clip.fx(vfx.fadeout, duration=FADE_TIME, initial_color=FADE_COLOR)
+			base_frame = self.frames[len(self.frames)-1]
+			self.clip = concatenate_videoclips([ self.clip, ImageSequenceClip([base_frame for i in range(FPS*FADE_TIME)], fps=FPS) ])
+			self.clip = self.clip.fx(vfx.fadeout, duration=FADE_TIME, final_color=FADE_COLOR)
+			self.setMusic()
 		
 		return self.clip
 
 	def generateVideoClipFromFrames(self):
 		debugMessage("Creating video clip")
 		self.clip = ImageSequenceClip(self.frames, fps=FPS)
-		if music != "":
-			audio_clip = AudioFileClip(os.path.abspath(self.music))
-			audio_clip = concatenate_audioclips([audio for i in range(math.ceil(float(self.clip.duration)/float(audio.duration)))])
-			audio_clip = audio_clip.set_duration(self.clip.duration)
-			self.clip = self.clip.set_audio()
-			
+		# self.clip = concatenate_videoclips([ImageClip(frame) for frame in self.frames])
+		self.setMusic()
 		return self.clip
+
+	def setMusic(self):
+		if self.music != "":
+			audio_clip = AudioFileClip(os.path.abspath(self.music))
+			audio_clip = concatenate_audioclips([audio_clip for i in range(math.ceil(float(self.clip.duration)/float(audio_clip.duration)))])
+			audio_clip = audio_clip.set_duration(self.clip.duration)
+			audio_clip = audio_clip.fx(afx.audio_fadein, FADE_TIME).fx(afx.audio_fadeout, FADE_TIME)
+			self.clip = self.clip.set_audio(audio_clip)
 
 	def outputVideo(self):
 		debugMessage("Outputting video")
@@ -230,15 +245,19 @@ class Video:
 			self.clip.write_videofile(os.path.join(self.out_path, "video.mp4"), **WRITE_SETTINGS)
 
 	def setupDirectoryStructure(self, out_path):
+
 		if not os.path.exists(os.path.join(out_path, "inforank/")):
 					os.mkdir(os.path.join(out_path, "inforank"))
-		
-		os.mkdir(os.path.join(out_path, "inforank", self.raw_title))
+
+		if not os.path.exists(os.path.join(out_path, "inforank", self.raw_title)):
+			os.mkdir(os.path.join(out_path, "inforank", self.raw_title))
+
 		self.out_path = os.path.join(out_path, "inforank", self.raw_title)
 		return self.out_path
 
-	def generateVideo(self):
-		self.previewDataBoxes()
+	def generateVideo(self, preview=True):
+		# if preview:
+		# 	self.previewDataBoxes()
 		debugMessage("Generating full video")
 		self.generateVideoImage()
 		self.generateVideoFrames()

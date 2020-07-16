@@ -70,9 +70,10 @@ class DataBox:
 			main = self.data_value + self.unit
 		return main
 
-	def generateImageBase(self): 
+	def generateImageBase(self):
 		debugMessage("Generating data box base")
 		# Base of the image with base colors, no text or images
+		self.light_color = getColorComplement(self.color) # Reconfigure lighter color
 		img = Image.new('RGB', self.dimensions) #Create blank image with right dimensions
 		draw = ImageDraw.Draw(img, mode='RGB') # Drawing ctx
 		draw.rectangle(self.getOuterDataValueCoordinates(), fill=self.light_color) # Drawing for light color border around value
