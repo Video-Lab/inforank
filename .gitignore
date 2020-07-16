@@ -10,3 +10,4 @@ __pycache__/*
 inforank/*
 tests/*.mp3
 .vscode/*
+!preview.png

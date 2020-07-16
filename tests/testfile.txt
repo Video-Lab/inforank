@@ -1,10 +1,10 @@
 width=1920
 height=1080
-title=Highest-Paying Jobs
+title=Best Fruits
 unit=
 unit_place=before
-prefix=1 IN
-suffix=PROBABILITY
+prefix=RANK
+suffix=
 color=
 bg_light_color=
 bg_color=
@@ -13,9 +13,9 @@ music=./tests/test.mp3
 out_path=
 
 ||BEGIN_DATA||
-data_value=12|data_title=Singer|data_image_type=icon|data_image=microphone
-data_value=39|data_title=Dancer|data_image_type=icon|data_image=dancing
-data_value=112|data_title=Engineer|data_image_type=icon|data_image=wrench
-data_value=1,024|data_title=CEO|data_image_type=icon|data_image=businessman, business, tower
-data_value=15,024|data_title=Python Engineer|data_image_type=icon|data_image=python
-data_value=9,412,340|data_title=Photographer|data_image_type=icon|data_image=camera
+data_value=6|data_title=Apple|data_image_type=icon|data_image=apple
+data_value=5|data_title=Orange|data_image_type=icon|data_image=orange
+data_value=4|data_title=Banana|data_image_type=icon|data_image=banana
+data_value=3|data_title=Kiwi|data_image_type=icon|data_image=kiwi
+data_value=2|data_title=Pear|data_image_type=icon|data_image=pear
+data_value=1|data_title=Peach|data_image_type=icon|data_image=peach
