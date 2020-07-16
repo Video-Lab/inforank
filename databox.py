@@ -6,23 +6,20 @@ class DataBox:
 	def calculateDataBoxWidth(cls, width):
 		return DATA_BOX_PERCENTAGE*int(width)
 
-	def __init__(self, data_box_width, data_box_height, data_value, unit, unit_place, prefix, suffix, data_title, color, bg_light_color, bg_color, data_image_type, data_image):
+	def __init__(self, data_box_width, data_box_height, data_value, unit, unit_place, prefix, suffix, data_title, color, bg_light_color, bg_color, data_image_type, data_image, position):
 		self.data_value = data_value # The data to be displayed
 		self.data_box_width = int(data_box_width)
 		self.data_box_height = int(data_box_height)
 		self.unit = unit # Units for the data
 		self.unit_place = unit_place # Before or After
-		self.prefix = prefix # Taxt above value
-		self.suffix = suffix # Text below value
+		self.setPrefix(prefix, position)
+		self.setSuffix(suffix, position)
 		self.data_title = data_title # Label
 		self.pad=DATA_VALUE_PADDING_PERCENTAGE*self.data_box_width
 		self.icon_urls = [] # URLs for multiple icons (If needed)
 		self.data_string = "" # Identifier showing prefix, main value, suffix, and title of data box
 
 		self.setupColors(color, bg_color, bg_light_color)
-		print(self.color)
-		print(self.bg_color)
-		print(self.bg_light_color)
 		self.data_image_type = data_image_type # File or icon
 		self.data_image = data_image # Path or search terms
 
@@ -30,6 +27,20 @@ class DataBox:
 		self.light_color = getColorComplement(self.color) # Get lighter color from misc function
 		self.generateDataString()
 		self.generateImage()
+
+	def setPrefix(self, prefix, position):
+		if prefix == "RANK_DATA_BOXES":
+			self.prefix = str(position) + "."
+		else:
+			self.prefix = prefix
+		return self.prefix
+
+	def setSuffix(self, suffix, position):
+		if suffix == "RANK_DATA_BOXES":
+			self.suffix = str(position)
+		else:
+			self.suffix = suffix
+		return self.suffix
 
 	def setupColors(self, color, bg_color, bg_light_color):
 		# if color[0] != "(":

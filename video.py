@@ -15,18 +15,27 @@ class Video:
 		self.clip = None # Video clip to be used
 		self.dimensions = [width, height]
 		self.title = self.generateTitle(title) # For video upload / 'pretty title'
+		# self.rankDataBoxes()
 
 	def generateRawTitle(self, title):
 		debugMessage("Generating raw title")
 		new_title = title
 		for forbidden in "\\/:*?\"<>|":
 			new_title.replace(forbidden, "_")
-
 		return new_title.lower().replace(" ", "_")
 
 	def generateTitle(self, title):
 		debugMessage("Generating main title")
 		return f"Data Comparison: {title} | {CHANNEL_NAME}" # Constant from misc file
+
+	# def rankDataBoxes(self):
+	# 	for i in range(len(self.data_boxes)):
+	# 		if self.data_boxes[i].prefix == "RANK_DATA_BOXES":
+	# 			self.data_boxes[i].setPrefix(str(len(self.data_boxes)-i))
+	# 			print(self.data_boxes[i].prefix)
+
+	# 		if self.data_boxes[i].suffix == "RANK_DATA_BOXES":
+	# 			self.data_boxes[i].setSuffix(str(len(self.data_boxes)-i))
 
 	def previewDataBoxes(self):
 		print("== PREVIEWING DATA BOXES ==\n")
