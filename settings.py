@@ -25,4 +25,6 @@ PPF = 1 # Number of pixels to shift per frame
 FADE_TIME = 1 # Number of seconds to fade in
 FADE_COLOR = (0,0,0) # Base color for fades
 DEBUG = True # Print debug messages
+BEGINNING_WAIT_TIME = 1 # Seconds to wait after fade before scrolling
+END_WAIT_TIME = 3 # Same as above, but for end
 WRITE_SETTINGS = {'codec': "libx264", 'bitrate': '5000k', 'ffmpeg_params': ['-crf', '18'], 'fps': FPS} # Video file settings for output.

@@ -210,21 +210,22 @@ class Video:
 		debugMessage(f"Setting {direction}-fade")
 		if direction == "in":
 			base_frame = self.frames[0]
-			self.clip = concatenate_videoclips([ ImageSequenceClip([base_frame for i in range(FPS*FADE_TIME)], fps=FPS), self.clip ])
+			self.clip = concatenate_videoclips([ ImageSequenceClip([base_frame for i in range(math.floor(FPS*FADE_TIME))], fps=FPS), self.clip ])
 			self.clip = self.clip.fx(vfx.fadein, duration=FADE_TIME, initial_color=FADE_COLOR)
 			self.setMusic()
 		
 		elif direction == "out":
 			base_frame = self.frames[len(self.frames)-1]
-			self.clip = concatenate_videoclips([ self.clip, ImageSequenceClip([base_frame for i in range(FPS*FADE_TIME)], fps=FPS) ])
+			self.clip = concatenate_videoclips([ self.clip, ImageSequenceClip([base_frame for i in range(math.floor(FPS*FADE_TIME))], fps=FPS) ])
 			self.clip = self.clip.fx(vfx.fadeout, duration=FADE_TIME, final_color=FADE_COLOR)
 			self.setMusic()
 		
 		return self.clip
 
+
 	def generateVideoClipFromFrames(self):
 		debugMessage("Creating video clip")
-		self.clip = ImageSequenceClip(self.frames, fps=FPS)
+		self.clip = concatenate_videoclips([ ImageSequenceClip([self.frames[0] for i in range(math.floor(FPS*BEGINNING_WAIT_TIME))], fps=FPS), ImageSequenceClip(self.frames, fps=FPS), ImageSequenceClip([self.frames[len(self.frames)-1] for i in range(math.floor(FPS*END_WAIT_TIME))], fps=FPS) ])
 		self.setMusic()
 		return self.clip
 
@@ -254,8 +255,8 @@ class Video:
 		return self.out_path
 
 	def generateVideo(self, preview=True):
-		if preview:
-			self.previewDataBoxes()
+		# if preview:
+		# 	self.previewDataBoxes()
 		debugMessage("Generating full video")
 		self.generateVideoImage()
 		self.generateVideoFrames()
