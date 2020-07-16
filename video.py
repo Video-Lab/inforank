@@ -275,4 +275,15 @@ class Video:
 		self.outputDataBoxes(os.path.join(self.out_path, "data_boxes"))
 		self.outputVideoImage(os.path.join(self.out_path, "video_image.png"))
 		self.outputVideo()
-	
+		self.outputVideoInformation()
+
+	def outputVideoInformation(self):
+		info = self.title + "\n\n"
+		for i in range(len(self.data_boxes)):
+			info += f"=== {self.data_boxes[i].data_string} ===\n"
+			info += f"{self.data_boxes[i].prefix}\n{self.data_boxes[i].data_value}\n{self.data_boxes[i].suffix}\n{self.data_boxes[i].data_title}\n{self.data_boxes[i].icon_urls[0]}\n\n"
+			for j in range(1, len(self.data_boxes[i].icon_urls)):
+				info += f"{self.data_boxes[i].icon_urls[j]}\n"
+			info += "\n=== ===\n\n"
+		with open(os.path.join(self.out_path, "info.txt"), "w+") as f:
+			f.write(info)
