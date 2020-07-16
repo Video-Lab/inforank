@@ -43,20 +43,6 @@ class DataBox:
 		return self.suffix
 
 	def setupColors(self, color, bg_color, bg_light_color):
-		# if color[0] != "(":
-		# 	self.color = hexToRGB(color)
-		# else:
-		# 	self.color = stringToTuple(color) 
-
-		# if bg_light_color[0] != "(":
-		# 	self.bg_light_color = hexToRGB(bg_light_color)
-		# else:
-		# 	self.bg_light_color = stringToTuple(bg_light_color) 
-
-		# if bg_color[0] != "(":
-		# 	self.bg_color = hexToRGB(bg_color)
-		# else:
-		# 	self.bg_color = stringToTuple(bg_color) 
 
 		self.color = getColorTuple(color) # Color of value background
 		self.bg_color = getColorTuple(bg_color) # Image bg color
@@ -104,41 +90,33 @@ class DataBox:
 		return img
 
 	def getOuterDataValueCoordinates(self): # Coordinates for safe data value box
-		# debugMessage("Getting outer data value coordinates: " + str([(0,0) ,(int(self.data_box_width),int(DATA_VALUE_PERCENTAGE*self.data_box_height))]))
 		return [(0,0) ,(int(self.data_box_width),int(DATA_VALUE_PERCENTAGE*self.data_box_height))]
 
-	def getInnerDataValueCoordinates(self):
-		# debugMessage("Getting inner data value coordinates: " + str([(int(self.pad),int(self.pad)),(int(self.data_box_width-self.pad),int(DATA_VALUE_PERCENTAGE*self.data_box_height-self.pad))])) 
+	def getInnerDataValueCoordinates(self): 
 		return [(int(self.pad),int(self.pad)),(int(self.data_box_width-self.pad),int(DATA_VALUE_PERCENTAGE*self.data_box_height-self.pad))]
 
 	def getDataTitleCoordinates(self): # Coordinates for data title, ...
 		value_coords = self.getOuterDataValueCoordinates()
-		# debugMessage("Getting data title coordinates: " + str([(0,value_coords[1][1]),(int(self.data_box_width),int(value_coords[1][1]+(DATA_TITLE_PERCENTAGE*self.data_box_height)))]))
 		return [(0,value_coords[1][1]),(int(self.data_box_width),int(value_coords[1][1]+(DATA_TITLE_PERCENTAGE*self.data_box_height)))]
 
 	def getDataImageCoordinates(self):
 		title_coords = self.getDataTitleCoordinates()
-		# debugMessage("Getting data image coordinates: " + str([(0,title_coords[1][1]),(self.data_box_width,int(title_coords[1][1]+(DATA_IMAGE_PERCENTAGE*self.data_box_height)))]))
 		return [(0,title_coords[1][1]),(self.data_box_width,int(title_coords[1][1]+(DATA_IMAGE_PERCENTAGE*self.data_box_height)))]
 
 	def getSafeDataImageCoordinates(self): # Get area for image to be placed in box
 		image_coords = self.getDataImageCoordinates()
 		x_pad = int( (DATA_IMAGE_PADDING_PERCENTAGE*(image_coords[1][0]-image_coords[0][0]))/2 )
 		y_pad = int( (DATA_IMAGE_PADDING_PERCENTAGE*(image_coords[1][1]-image_coords[0][1]))/2 )
-		# debugMessage("Getting safe data image coordinates: " + str([(x_pad,image_coords[0][1]+y_pad),(self.data_box_width-x_pad,int(image_coords[1][1]-y_pad))]))
 		return [(x_pad,image_coords[0][1]+y_pad),(self.data_box_width-x_pad,int(image_coords[1][1]-y_pad))]
 
 	def generateTextFont(self, text, size, bold, box=None): # Generates a safe font and font size to be used within given coordinates with a given text
 		debugMessage(f"Generating font for text: {text} at size {size}")
 		if not box:
 			box = [(0,0), (self.data_box_width, self.data_box_height)]
-		# relative_coords = [(0,0), (coords[1][0]-coords[0][0],coords[1][1]-coords[1][0])]
 		if bold:
 			font_path = FONT_BOLD
 		else:
 			font_path = FONT_REGULAR
-
-		# font = ImageFont.truetype(font=font_path,size=int((((TEXT_PERCENTAGE*relative_coords[1][0])/max(1,len(text))))*0.75)) # Size estimate, convert px to pt
 
 		font = ImageFont.truetype(font=font_path, size=size)
 		
@@ -204,8 +182,7 @@ class DataBox:
 		img = self.writeText(img, self.suffix, suffix_font, text_color, suffix_coords)
 
 		# Draw borders around text areas (debug only)
-		# draw = ImageDraw.Draw(img, mode='RGB')
-		
+		# draw = ImageDraw.Draw(img, mode='RGB')	
 		# draw.rectangle(prefix_coords, outline='white')
 		# draw.rectangle(main_coords, outline='white')
 		# draw.rectangle(suffix_coords, outline='white')

@@ -264,8 +264,8 @@ class Video:
 		return self.out_path
 
 	def generateVideo(self, preview=True):
-		# if preview:
-		# 	self.previewDataBoxes()
+		if preview:
+			self.previewDataBoxes()
 		debugMessage("Generating full video")
 		self.generateVideoImage()
 		self.generateVideoFrames()
@@ -275,3 +275,4 @@ class Video:
 		self.outputDataBoxes(os.path.join(self.out_path, "data_boxes"))
 		self.outputVideoImage(os.path.join(self.out_path, "video_image.png"))
 		self.outputVideo()
+	

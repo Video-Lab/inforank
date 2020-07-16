@@ -68,8 +68,8 @@ def writeVideoFramesToImages(path, out_dir, num_frames=100):
 	video.generateVideoImage()
 	video.generateVideoFrames()
 	video.setFade("in")
-	# video.setFade("out")
-
+	video.setFade("out")
+	
 	for f in range(min(len(video.frames), num_frames)):
 		img = Image.fromarray(np.uint8(video.frames[f])).save(os.path.abspath(os.path.join(out_dir, f"frame_{f}.png")))
 
