@@ -16,11 +16,17 @@ if not ICONFINDER_API_KEY:
 def hexToRGB(color):
 	if color[0] == "#":
 		color = color[1:] # Remove hash
-
 	return tuple([int(color[0:2],16), int(color[2:4],16), int(color[4:6],16)])
 
 def RGBToHex(color):
-	return "#" + hex(color[0])[2:] + hex(color[1])[2:] + hex(color[2])[2:] # Remove 0x at start
+	hex_color = "#"
+	for c in color:
+		hc = hex(c)[2:]
+		if len(hc) == 1:
+			hc = "0" + hc
+		print(hc)
+		hex_color += hc
+	return hex_color # Remove 0x at start
 
 def getColorComplement(color, shift=45):
 	if type(color) == str:
@@ -54,3 +60,17 @@ def debugMessage(m):
 	# Prints message if debug is true
 	if DEBUG:
 		print(m)
+
+def stringToTuple(color):
+	if type(color) == tuple or type(color) == list:
+		return tuple(color)
+	
+	return tuple(int(c.strip()) for c in color[1:len(color)-1].split(","))
+
+def getColorTuple(color):
+	if type(color) == str:
+		if color[0] == "(":
+			color = stringToTuple(color)
+		else:
+			color = hexToRGB(color)
+	return color

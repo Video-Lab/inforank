@@ -2,12 +2,13 @@ from importlib import import_module
 from sys import modules
 
 # Testing info
-TESTS = [  ["writeVideoFramesToImages", {'path': './tests/testfile.txt', 'out_dir': './tests/imgs/frames/'}] ]
+TESTS = [ ["getGoodTextColor", {'color': '#ffffff'}] ]
 OLD_TESTS = [["parseFileTest", {'path': './tests/testfile.txt'}],
 ["generateImageTest", {'path': './tests/testfile.txt', 'test_path': './tests/imgs/databox_base_w_value_sample.png'}],
 ["generateAndTestDataBoxes", {'path': './tests/testfile.txt', 'out_dir': './tests/imgs/'}],
 ["generateVideoImage", {'path': './tests/testfile.txt', 'out_dir': './tests/imgs/videoimage.png'}],
-["generateVideo", {'path': './tests/testfile.txt', 'out_path': './tests/imgs/videoimage.png'}]]
+["generateVideo", {'path': './tests/testfile.txt', 'out_path': './tests/imgs/videoimage.png'}],
+["writeVideoFramesToImages", {'path': './tests/testfile.txt', 'out_dir': './tests/imgs/frames/'}]]
 
 def parseFile(path):
 	import fileparser
@@ -72,6 +73,9 @@ def writeVideoFramesToImages(path, out_dir, num_frames=100):
 	for f in range(min(len(video.frames), num_frames)):
 		img = Image.fromarray(np.uint8(video.frames[f])).save(os.path.abspath(os.path.join(out_dir, f"frame_{f}.png")))
 
+def getGoodTextColor(color):
+	import misc
+	print(misc.getGoodTextColor(color))
 	
 if __name__ == "__main__":
 	for test in TESTS:

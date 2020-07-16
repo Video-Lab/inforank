@@ -29,7 +29,7 @@ def parseFile(path):
 		settings['data_box_width'] = DataBox.calculateDataBoxWidth(settings['width'])
 
 		data_settings = getPairsInList(settings, ['data_box_width', 'data_box_height', 'data_value', 'unit', 'unit_place', 'prefix', 'suffix', 'data_title', 'color', 'bg_light_color', 'bg_color'])
-		video_settings = getPairsInList(settings, ['width', 'height', 'title', 'music', 'out_path'])
+		video_settings = getPairsInList(settings, ['width', 'height', 'title', 'music', 'out_path', 'gap_color'])
 
 		data_boxes = [DataBox(**data_settings, **row) for row in data] # Convert data row strings to DataBox classes
 		video = Video(**video_settings, data_boxes=data_boxes) # Unpack settings, convert to video class

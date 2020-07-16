@@ -1,14 +1,14 @@
 from misc import *
 
 class Video:
-	def __init__(self, width, height, title, music, data_boxes, out_path):
+	def __init__(self, width, height, title, music, data_boxes, out_path, gap_color):
 		self.width = int(width)
 		self.height = int(height)
 		self.raw_title = self.generateRawTitle(title) # For filename, etc.
 		self.music = music
 		self.data_boxes = data_boxes # Boxes used in video
 		self.out_path = self.setupDirectoryStructure(out_path) # Path to output assets and video to
-
+		self.gap_color = getColorTuple(gap_color)
 		self.image = None # Eventual video image
 		self.image_pixels = None # Pixels of image
 		self.frames = [] # Array used to store frames for video
@@ -84,9 +84,9 @@ class Video:
 						'suffix': '',
 						'data_title': '',
 						'image_type': 'file/icon',
-						'color': 'BG color for data value, hex',
-						'bg_light_color': 'color for title bar, hex',
-						'bg_color': 'color for image section, hex'
+						'color': 'BG color for data value, hex/RGB',
+						'bg_light_color': 'color for title bar, hex/RGB',
+						'bg_color': 'color for image section, hex/RGB'
 					}
 
 					# Values to change
@@ -126,7 +126,6 @@ class Video:
 					data_box.generateImage()
 
 	def outputDataBoxes(self, out_dir):
-
 		if not os.path.exists(out_dir):
 			os.mkdir(out_dir)
 
@@ -149,7 +148,7 @@ class Video:
 		debugMessage("Generating video image base")
 		# Generates base of image used to create video frames
 		size = ( int( ( len(self.data_boxes) * (DATA_BOX_PERCENTAGE*self.width) ) + ( (len(self.data_boxes)+1) * (GAP_PERCENTAGE*self.width) ) ) , int(self.height) )
-		img = Image.new("RGBA",size,getColorComplement(self.data_boxes[0].bg_color, shift=-25))
+		img = Image.new("RGBA",size,getColorComplement(self.gap_color, shift=-25))
 		return img
 	
 	def fillVideoImage(self, img):
@@ -226,7 +225,6 @@ class Video:
 	def generateVideoClipFromFrames(self):
 		debugMessage("Creating video clip")
 		self.clip = ImageSequenceClip(self.frames, fps=FPS)
-		# self.clip = concatenate_videoclips([ImageClip(frame) for frame in self.frames])
 		self.setMusic()
 		return self.clip
 
@@ -256,8 +254,8 @@ class Video:
 		return self.out_path
 
 	def generateVideo(self, preview=True):
-		# if preview:
-		# 	self.previewDataBoxes()
+		if preview:
+			self.previewDataBoxes()
 		debugMessage("Generating full video")
 		self.generateVideoImage()
 		self.generateVideoFrames()

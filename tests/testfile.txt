@@ -5,9 +5,10 @@ unit=
 unit_place=before
 prefix=1 IN
 suffix=PROBABILITY
-color=
+color=(100,43,180)
 bg_light_color=
 bg_color=
+gap_color=
 music=./tests/test.mp3
 out_path=
 
