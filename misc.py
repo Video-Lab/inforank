@@ -5,6 +5,7 @@ import time
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 import math
+import random
 from moviepy.editor import *
 from settings import *
  

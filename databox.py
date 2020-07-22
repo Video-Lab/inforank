@@ -93,7 +93,7 @@ class DataBox:
 		return [(0,0) ,(int(self.data_box_width),int(DATA_VALUE_PERCENTAGE*self.data_box_height))]
 
 	def getInnerDataValueCoordinates(self): 
-		return [(int(self.pad),int(self.pad)),(int(self.data_box_width-self.pad),int(DATA_VALUE_PERCENTAGE*self.data_box_height-self.pad))]
+		return [(int(self.pad+DATA_VALUE_TEXT_PADDING),int(self.pad+DATA_VALUE_TEXT_PADDING)),(int(self.data_box_width-self.pad-DATA_VALUE_TEXT_PADDING),int(DATA_VALUE_PERCENTAGE*self.data_box_height-self.pad-DATA_VALUE_TEXT_PADDING))]
 
 	def getDataTitleCoordinates(self): # Coordinates for data title, ...
 		value_coords = self.getOuterDataValueCoordinates()
@@ -211,7 +211,10 @@ class DataBox:
 		# Checks if data type is loading from file
 		if self.data_image_type == "file":
 			# Open from given path and convert to RGBA for transparency
-			img = Image.open(os.path.abspath(self.data_image)).convert("RGBA")
+			if self.data_image[:4] == "http":
+				img = self.getImageFromURL(self.data_image)
+			else:
+				img = Image.open(os.path.abspath(self.data_image)).convert("RGBA")
 		else:
 			# Call to function that gets icon
 			img = self.getDataIcon()
@@ -224,6 +227,8 @@ class DataBox:
 
 		# Declaration to be used for later
 		img = None
+		
+		self.icon_urls = []
 
 		# Split for multiple terms, remove spaces from each term
 		queries = [query.strip() for query in self.data_image.split(",")]
@@ -264,12 +269,13 @@ class DataBox:
 					self.icon_urls.append(icon['raster_sizes'][biggest]['formats'][0]["preview_url"])
 
 		# Get first icon URL
+		random.shuffle(self.icon_urls)
 		img_url = self.icon_urls[0]
-		img = self.getDataIconFromURL(img_url).convert("RGBA")
+		img = self.getImageFromURL(img_url).convert("RGBA")
 
 		return img
 
-	def getDataIconFromURL(self, url):
+	def getImageFromURL(self, url):
 		# Loads image from external URL
 		return Image.open(BytesIO(requests.get(url).content))
 
@@ -313,7 +319,7 @@ class DataBox:
 		#Uses next icon URL in list & re-generates image
 		self.icon_urls.pop(0)
 		img_url = self.icon_urls[0]
-		img = self.getDataIconFromURL(img_url).convert("RGBA")
+		img = self.getImageFromURL(img_url).convert("RGBA")
 
 		self.image = self.generateImageBase()
 		self.image = self.writeDataValue(self.image)
@@ -344,3 +350,7 @@ class DataBox:
 			main = self.data_value + self.unit
 		self.data_string = f"{self.prefix} {main} {self.suffix} - {self.data_title}"
 		return self.data_string
+	
+	def savePreviewImage(self, path="./preview_databox.png"):
+		self.image.save(path)
+		return path

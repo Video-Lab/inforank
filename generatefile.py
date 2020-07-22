@@ -30,7 +30,8 @@ if __name__ == "__main__":
 	p.add_argument('-bl', '--bg-light-color', default="", type=str, help="Background color for title strip.")
 	p.add_argument('-bc', '--bg-color', default="", type=str, help="Background color for image box.")
 	p.add_argument('-m', '--music', default="", type=str, help="Music for video.")
-	p.add_argument('-p', '--path', type=str, required=True, help="Path to write file")
+	p.add_argument('-gc', '--gap-color', default="", type=str, help="Color to use for gaps between boxes.")
+	p.add_argument('-p', '--out-path', type=str, required=True, help="Path to write file")
 	p.add_argument('-n', '--num-rows', default=50, type=int, help="Number of data rows to add.")
 
 	args = vars(p.parse_args())

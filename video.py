@@ -108,7 +108,7 @@ class Video:
 			ok = False
 
 			while not ok:
-				data_box.image.show()
+				data_box.savePreviewImage(path=os.path.join(self.out_path, "preview_databox.png"))
 
 				# Checks if already icon, asks to pull new icon for ease of access (most likely change)
 				if data_box.data_image_type == "icon":
@@ -194,8 +194,11 @@ class Video:
 							data_box.setDataImageType("icon")
 							query = input("Enter icon querie(s), comma-separated: ")
 							data_box.data_image = query
+							data_box.getDataIcon()
 
 					data_box.generateImage()
+			
+		os.remove(os.path.join(self.out_path, "preview_databox.png"))
 
 	def outputDataBoxes(self, out_dir):
 		if not os.path.exists(out_dir):
